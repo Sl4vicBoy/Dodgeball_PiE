@@ -1,27 +1,14 @@
 import pygame
-from random import random, seed
+from random import randint, seed
 from player import Player
 from obstacle import Obstacle
+from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, GREEN, VIOLET
 pygame.init()
 
-SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
+FPS = 60
+
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Dodge-ball")
-
-LEFT = 0
-RIGHT = 1
-
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-PINK = (255, 192, 203)
-BLUE = (29, 226, 217)
-RED = (226, 29, 38)
-GREEN = (137, 226, 29)
-VIOLET = (118, 29, 226)
-
-BORDERS_PARAMETER = 5
-
-FPS = 60
 
 middle_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH // 2 - BORDERS_PARAMETER // 2, 0)
 team_right_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH - BORDERS_PARAMETER, 0)
@@ -50,9 +37,9 @@ def main():
     clock = pygame.time.Clock()
 
     seed()
-    team_with_ball = random()
-    team_right = []
+    team_with_ball = randint(LEFT, RIGHT)
     team_left = []
+    team_right = []
 
     # koordy z gory ustalone dla poszczegolnych teamow(punkty spawnu)
     # postacie nie beda sie respic randomowo tylko w okreslonych miejscach w zaleznosci od tego ktora druzyna posiada pilke i zaczyna gre
@@ -63,24 +50,24 @@ def main():
 
     if team_with_ball == RIGHT:
         for xy in players_offensive_coords:
-            team_right.append(Player(team_right, xy[0], xy[1]))
+            team_right.append(Player(RIGHT, xy[0], xy[1]))
         for xy in players_defensive_coords:
-            team_left.append(Player(team_left, xy[0], xy[1]))
+            team_left.append(Player(LEFT, xy[0], xy[1]))
     else:
         for xy in players_offensive_coords:
-            team_left.append(Player(team_left, xy[0], xy[1]))
+            team_left.append(Player(LEFT, xy[0], xy[1]))
         for xy in players_defensive_coords:
-            team_right.append(Player(team_right, xy[0], xy[1]))
-
+            team_right.append(Player(RIGHT, xy[0], xy[1]))
+    print(f"Team with ball: {'RIGHT' if team_with_ball == RIGHT else 'LEFT'}")
     while running:
-        # Cap the frame rate
         clock.tick(FPS)
-        # Draw background
         draw(SCREEN, team_left + team_right)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 break
+        player_in_control = team_left[0]
+        player_in_control.move()
     pygame.quit()
 
 
