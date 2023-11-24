@@ -1,7 +1,6 @@
 import pygame
 import os
-import random
-
+from obstacles import *
 
 pygame.init()
 
@@ -9,37 +8,49 @@ pygame.init()
 #consty (kwasny nie lubi krotek)
 left=(0)
 right=(1)
-screen_width, screen_height = (800),(600)
-middle_line_width = (10)
-border_parameters = (5)
 
 class Player(pygame.sprite.Sprite):
+    
     def __init__(self,team,x,y):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(os.path.join('images', 'superswinka.png')).convert()
         self.rect = self.image.get_rect()
         self.rect.center = (x,y)
         self.team = team
+        self.x = x
+        self.y = y
 
-    
-class Obstacle:
-    def __init__(self, width, height, x, y):
-        self.obstacle_width = width
-        self.obstacle_height = height
-        self.obstacle_x = x
-        self.obstacle_y = y
-    def return_parameters(self):
-        return self.obstacle_x, self.obstacle_y, self.obstacle_width, self.obstacle_height
-    
+    def move(self, velocity):
+         keys = pygame.key.get_pressed()
+         
+         match self.team:
+            case 1: #right
+                if keys[pygame.K_LEFT] and self.x - velocity > (screen_width+middle_line_width)/2+player_width/2:
+                    self.x -= velocity
+                if keys[pygame.K_RIGHT] and self.x + velocity < screen_width-border_parameters-player_width/2:
+                    self.x += velocity
+            
+            case 0: #left
+                 if keys[pygame.K_LEFT] and self.x - velocity > border_parameters + player_width/2:
+                    self.x -= velocity
+                 if keys[pygame.K_RIGHT] and self.x + velocity < (screen_width - middle_line_width)/2-player_width/2:
+                    self.x += velocity
 
-middle_line = Obstacle(middle_line_width,screen_height,screen_width//2 - middle_line_width//2,0)
-right_line =  Obstacle(border_parameters,screen_height,screen_width-border_parameters,0)
-left_line = Obstacle(border_parameters,screen_height,0,0)
-up_line = Obstacle(screen_width,border_parameters,0,0)
-down_line = Obstacle(screen_width,border_parameters,0,screen_height-border_parameters)
+         if keys[pygame.K_UP] and self.y - velocity > player_height/2 + border_parameters:
+             self.y-=velocity
+         if keys[pygame.K_DOWN] and self.y + velocity < screen_height-player_height/2 - border_parameters:
+             self.y+=velocity 
 
+         self.rect.center = (self.x,self.y)
+'''
+         collisions = pygame.sprite.spritecollide(self, team, True)              
 
-        
+         if collisions:
+            self.x = previous_position[0]
+            self.y = previous_position[1]
+         else:
+             self.rect.center = (self.x, self.y)
+'''
 
 # Set up display
 
@@ -51,7 +62,7 @@ white = (255, 255, 255)
 pink = (255, 192, 203)
 
 
-player_width, player_height = 305, 209
+player_width, player_height = 165, 97
 
 #maksymalne range na potem(poza te koordy postacie nie moga wychodzic; kolizja z dotykaniem sie bedzie tez pozniej xD)
 range_x_right = (player_width // 2, screen_width - player_width // 2)
@@ -71,7 +82,7 @@ team_left = []
 players_offensive_coords = [(3*screen_width/4, screen_height/4),(7*screen_width/10,  screen_height/2),(3*screen_width/4, 3*screen_height/4)]
 players_defensive_coords = [(screen_width/4, screen_height/4),(screen_width/5, screen_height/2),(screen_width/4, 3*screen_height/4)]
 
-if ball == right:
+if (ball==right):
     for xy in players_offensive_coords:
         team_right.append(Player(right, xy[0],xy[1]))
     for xy in players_defensive_coords:
@@ -86,12 +97,17 @@ else:
 all_players = pygame.sprite.Group()
 all_players.add(team_right, team_left)
 
+#player movement
+
+#player's velocity (pozniej sie ogarnie cos bardziej skomplikowanego)
+velocity = (2)
 
 # Game loop
 clock = pygame.time.Clock()
 
 running = True
 while running:
+    pygame.time.delay(10)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -109,11 +125,21 @@ while running:
     pygame.draw.rect(screen, pink,left_line_params)
     pygame.draw.rect(screen, pink,up_line_params)
     pygame.draw.rect(screen, pink,down_line_params)
-    # Draw player
-    all_players.draw(screen)
+    
+    #movement
+    player_in_control = team_left[0]
+    match player_in_control.team:
+        case 0:
+            player_in_control.move(velocity)
+        case 1:
+            player_in_control.move(velocity)
 
+
+    # Draw player
+    all_players.draw(screen)        
+    
     # Update display
-    pygame.display.flip()
+    pygame.display.update()
 
     # Cap the frame rate
     clock.tick(60)
