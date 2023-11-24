@@ -29,7 +29,7 @@ class Obstacle:
         self.obstacle_x = x
         self.obstacle_y = y
     def return_parameters(self):
-        return (self.obstacle_x, self.obstacle_y, self.obstacle_width, self.obstacle_height)
+        return self.obstacle_x, self.obstacle_y, self.obstacle_width, self.obstacle_height
     
 
 middle_line = Obstacle(middle_line_width,screen_height,screen_width//2 - middle_line_width//2,0)
@@ -71,7 +71,7 @@ team_left = []
 players_offensive_coords = [(3*screen_width/4, screen_height/4),(7*screen_width/10,  screen_height/2),(3*screen_width/4, 3*screen_height/4)]
 players_defensive_coords = [(screen_width/4, screen_height/4),(screen_width/5, screen_height/2),(screen_width/4, 3*screen_height/4)]
 
-if (ball==right):
+if ball == right:
     for xy in players_offensive_coords:
         team_right.append(Player(right, xy[0],xy[1]))
     for xy in players_defensive_coords:
