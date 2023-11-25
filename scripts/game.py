@@ -64,7 +64,7 @@ def main():
             team_right.append(Player(RIGHT, xy[0], xy[1]))
     print(f"Team with ball: {'RIGHT' if team_with_ball == RIGHT else 'LEFT'}")
     
-    ball=Ball(SCREEN_WIDTH//2,SCREEN_HEIGHT//2,10)#dodajemy pilke
+    ball=Ball(SCREEN_WIDTH//2,SCREEN_HEIGHT//2,6)#dodajemy pilke
 
     while running:
         clock.tick(FPS)
