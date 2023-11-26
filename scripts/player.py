@@ -16,13 +16,12 @@ class Player:
         else:
             self.color = BLUE
 
-    def move(self, team):
+    def move(self):
         keys = pygame.key.get_pressed()
 
         match self.team:
             case 1:  # RIGHT
-                if keys[pygame.K_LEFT] and self.x - Player.VEL > (
-                        SCREEN_WIDTH + BORDERS_PARAMETER) / 2 + Player.RADIUS:
+                if keys[pygame.K_LEFT] and self.x - Player.VEL > (SCREEN_WIDTH + BORDERS_PARAMETER) / 2 + Player.RADIUS:
                     self.x -= Player.VEL
                 if keys[pygame.K_RIGHT] and self.x + Player.VEL < SCREEN_WIDTH - BORDERS_PARAMETER - Player.RADIUS:
                     self.x += Player.VEL

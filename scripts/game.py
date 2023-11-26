@@ -77,13 +77,8 @@ def main():
                 running = False
                 break
 
-        player_in_control = team_right[0]
-
-        match player_in_control.team:
-            case 1:
-                player_in_control.move(team_right)
-            case 0:
-                player_in_control.move(team_left)
+        player_in_control = team_left[0]
+        player_in_control.move()
 
     pygame.quit()
 
