@@ -3,11 +3,13 @@ from random import randint, seed
 from player import Player
 from obstacle import Obstacle
 from ball import Ball
+
 from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, GREEN, VIOLET
 
 pygame.init()
 
 FPS = 60
+
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Dodge-ball")
 
@@ -17,13 +19,13 @@ team_left_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, 0, 0)
 up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0)
 down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER)
 
-
 def draw(screen, players, ball):
     # Draw background
     screen.fill(GREEN)
     for player in players:
         player.draw(screen)
     ball.draw(screen)    
+
     pygame.draw.rect(screen, VIOLET, middle_line.return_parameters())
     pygame.draw.rect(screen, VIOLET, team_right_line.return_parameters())
     pygame.draw.rect(screen, VIOLET, team_left_line.return_parameters())
@@ -66,12 +68,16 @@ def main():
 
     print(f"Team with ball: {'RIGHT' if team_with_ball == RIGHT else 'LEFT'}")
 
+    #docelowo pozniej sie cos z tym madrego zrobi
+    all_players = pygame.sprite.Group()
+    all_players.add(team_right, team_left)
     ball = Ball(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, 6)
-
+    
     while running:
         clock.tick(FPS)
-        draw(SCREEN, team_left + team_right, ball)
-        
+        draw(SCREEN, all_players, ball)
+        pygame.display.update()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -79,10 +85,17 @@ def main():
 
         player_in_control = team_left[0]
         player_in_control.move()
+
+        if player_in_control.team == RIGHT:
+            player_in_control.check_collision(team_right)
+        else:
+            player_in_control.check_collision(team_left)
+
         ball.move()
         ball.handle_collision_wall()
-        for player in team_left + team_right:
+        for player in all_players:
             ball.handle_collision_player(player)
+
     pygame.quit()
 
 
