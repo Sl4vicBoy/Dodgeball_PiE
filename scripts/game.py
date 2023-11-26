@@ -17,6 +17,7 @@ team_left_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, 0, 0)
 up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0)
 down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER)
 
+
 def draw(screen, players, ball):
     # Draw background
     screen.fill(GREEN)
@@ -29,6 +30,7 @@ def draw(screen, players, ball):
     pygame.draw.rect(screen, VIOLET, up_line.return_parameters())
     pygame.draw.rect(screen, VIOLET, down_line.return_parameters())
     pygame.display.update()
+
 
 def main():
     running = True
@@ -64,11 +66,11 @@ def main():
 
     print(f"Team with ball: {'RIGHT' if team_with_ball == RIGHT else 'LEFT'}")
 
-    ball = Ball(SCREEN_WIDTH//2,SCREEN_HEIGHT//2,6)
+    ball = Ball(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, 6)
 
     while running:
         clock.tick(FPS)
-        draw(SCREEN, team_left + team_right,ball)
+        draw(SCREEN, team_left + team_right, ball)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -82,6 +84,7 @@ def main():
         for player in team_left + team_right:
             ball.handle_collision_player(player)
     pygame.quit()
+
 
 if __name__ == '__main__':
     main()
