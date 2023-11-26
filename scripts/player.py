@@ -1,8 +1,8 @@
 import pygame
 from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, RED, BLUE, PINK
 
-
 class Player(pygame.sprite.Sprite):
+  
     RADIUS = 20
     VEL = 4
 
@@ -25,8 +25,7 @@ class Player(pygame.sprite.Sprite):
 
         match self.team:
             case 1:  # RIGHT
-                if keys[pygame.K_LEFT] and self.x - Player.VEL > (
-                        SCREEN_WIDTH + BORDERS_PARAMETER) / 2 + Player.RADIUS:
+                if keys[pygame.K_LEFT] and self.x - Player.VEL > (SCREEN_WIDTH + BORDERS_PARAMETER) / 2 + Player.RADIUS:
                     self.x -= Player.VEL
                 if keys[pygame.K_RIGHT] and self.x + Player.VEL < SCREEN_WIDTH - BORDERS_PARAMETER - Player.RADIUS:
                     self.x += Player.VEL
@@ -61,3 +60,4 @@ class Player(pygame.sprite.Sprite):
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.center, self.radius)
+

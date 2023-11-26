@@ -2,6 +2,8 @@ import pygame
 from random import randint, seed
 from player import Player
 from obstacle import Obstacle
+from ball import Ball
+
 from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, GREEN, VIOLET
 
 pygame.init()
@@ -17,13 +19,12 @@ team_left_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, 0, 0)
 up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0)
 down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER)
 
-
-def draw(screen, players):
+def draw(screen, players, ball):
     # Draw background
     screen.fill(GREEN)
-
     for player in players:
         player.draw(screen)
+    ball.draw(screen)    
 
     pygame.draw.rect(screen, VIOLET, middle_line.return_parameters())
     pygame.draw.rect(screen, VIOLET, team_right_line.return_parameters())
@@ -33,7 +34,6 @@ def draw(screen, players):
     pygame.display.update()
 
 
-# Game loop
 def main():
     running = True
     clock = pygame.time.Clock()
@@ -43,8 +43,6 @@ def main():
     team_left = []
     team_right = []
 
-    # koordy z gory ustalone dla poszczegolnych teamow(punkty spawnu) postacie nie beda sie respic randomowo tylko w
-    # okreslonych miejscach w zaleznosci od tego ktora druzyna posiada pilke i zaczyna gre
     players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
                                       (7 * SCREEN_WIDTH / 10, SCREEN_HEIGHT / 2),
                                       (3 * SCREEN_WIDTH / 4, 3 * SCREEN_HEIGHT / 4)]
@@ -57,7 +55,6 @@ def main():
     players_left_offensive_coords = [(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
                                      (3 * SCREEN_WIDTH / 10, SCREEN_HEIGHT / 2),
                                      (SCREEN_WIDTH / 4, 3 * SCREEN_HEIGHT / 4)]
-
     if team_with_ball == RIGHT:
         for xy in players_right_offensive_coords:
             team_right.append(Player(RIGHT, xy[0], xy[1]))
@@ -71,12 +68,14 @@ def main():
 
     print(f"Team with ball: {'RIGHT' if team_with_ball == RIGHT else 'LEFT'}")
 
+    #docelowo pozniej sie cos z tym madrego zrobi
     all_players = pygame.sprite.Group()
     all_players.add(team_right, team_left)
-
+    ball = Ball(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, 6)
+    
     while running:
         clock.tick(FPS)
-        draw(SCREEN, all_players)
+        draw(SCREEN, all_players, ball)
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -86,10 +85,17 @@ def main():
 
         player_in_control = team_left[0]
         player_in_control.move()
+
         if player_in_control.team == RIGHT:
             player_in_control.check_collision(team_right)
         else:
             player_in_control.check_collision(team_left)
+
+        ball.move()
+        ball.handle_collision_wall()
+        for player in all_players:
+            ball.handle_collision_player(player)
+
     pygame.quit()
 
 
