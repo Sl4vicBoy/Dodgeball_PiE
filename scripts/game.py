@@ -2,7 +2,7 @@ import pygame
 from random import randint, seed
 from player import Player
 from obstacle import Obstacle
-from ball import Ball, handle_collision_wall,handle_collision_players
+from ball import Ball
 from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, GREEN, VIOLET
 pygame.init()
 
@@ -16,8 +16,6 @@ team_right_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH - BORD
 team_left_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, 0, 0)
 up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0)
 down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER)
-
-
 
 
 def draw(screen, players,ball):
@@ -64,7 +62,7 @@ def main():
             team_right.append(Player(RIGHT, xy[0], xy[1]))
     print(f"Team with ball: {'RIGHT' if team_with_ball == RIGHT else 'LEFT'}")
     
-    ball=Ball(SCREEN_WIDTH//2,SCREEN_HEIGHT//2,6)#dodajemy pilke
+    ball = Ball(SCREEN_WIDTH//2,SCREEN_HEIGHT//2,6)
 
     while running:
         clock.tick(FPS)
@@ -78,9 +76,9 @@ def main():
         player_in_control = team_left[0]
         player_in_control.move()
         ball.move()#pilka sie rusza
-        handle_collision_wall(ball)#pilka omija przeszkody
+        ball.handle_collision_wall()
         for player in team_left + team_right:
-            handle_collision_players(ball, player)
+            ball.handle_collision_player(player)
 
     pygame.quit()
 
