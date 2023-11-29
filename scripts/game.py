@@ -86,14 +86,15 @@ def main():
 
         player_in_control = team_left[0]
         player_in_control.move()
-        ball.move()
 
         if player_in_control.team == RIGHT:
             player_in_control.check_collision(team_right)
         else:
             player_in_control.check_collision(team_left)
 
-        # ball.handle_collision_wall()
+        ball.move()
+        ball.check_collision_wall()
+        ball.check_collision_player(all_players)
         pygame.display.flip()
     pygame.quit()
 
