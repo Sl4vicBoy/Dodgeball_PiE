@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):
         match self.team:
             case 1:  # RIGHT
                 if keys[pygame.K_RIGHT] and self.rect.centerx + Player.VEL < SCREEN_WIDTH - BORDERS_PARAMETER - Player.RADIUS:
-                    self.rect.x += self.VEL
+                    self.rect.move(self.VEL, 0)
                 if keys[pygame.K_LEFT] and self.rect.centerx - Player.VEL > (SCREEN_WIDTH + BORDERS_PARAMETER) / 2 + Player.RADIUS:
                     self.rect.x -= self.VEL
 
