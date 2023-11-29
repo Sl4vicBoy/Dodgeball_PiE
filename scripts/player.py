@@ -3,47 +3,40 @@ from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER
 
 
 class Player(pygame.sprite.Sprite):
-  
     RADIUS = 20
     VEL = 4
 
     def __init__(self, team, x, y):
         pygame.sprite.Sprite.__init__(self)  # konstruktor klasy bazowej jak cos
         self.team = int(team)
-        self.x = x
-        self.y = y
-        self.center = (x, y)
         self.radius = Player.RADIUS
         if team:
             self.color = 'Red'
         else:
             self.color = 'Blue'
         self.image = pygame.Surface((Player.RADIUS * 2, Player.RADIUS * 2))
-        self.rect = self.image.get_rect(center=self.center)
+        self.rect = self.image.get_rect(center=(x, y))
 
     def move(self):
         keys = pygame.key.get_pressed()
-
         match self.team:
             case 1:  # RIGHT
-                if keys[pygame.K_LEFT] and self.x - Player.VEL > (SCREEN_WIDTH + BORDERS_PARAMETER) / 2 + Player.RADIUS:
-                    self.x -= Player.VEL
-                if keys[pygame.K_RIGHT] and self.x + Player.VEL < SCREEN_WIDTH - BORDERS_PARAMETER - Player.RADIUS:
-                    self.x += Player.VEL
+                if keys[pygame.K_RIGHT] and self.rect.centerx + Player.VEL < SCREEN_WIDTH - BORDERS_PARAMETER - Player.RADIUS:
+                    self.rect.x += self.VEL
+                if keys[pygame.K_LEFT] and self.rect.centerx - Player.VEL > (SCREEN_WIDTH + BORDERS_PARAMETER) / 2 + Player.RADIUS:
+                    self.rect.x -= self.VEL
 
             case 0:  # LEFT
-                if keys[pygame.K_LEFT] and self.x - Player.VEL > BORDERS_PARAMETER + Player.RADIUS:
-                    self.x -= Player.VEL
-                if keys[pygame.K_RIGHT] and self.x + Player.VEL < (
+                if keys[pygame.K_RIGHT] and self.rect.centerx + Player.VEL < (
                         SCREEN_WIDTH - BORDERS_PARAMETER) / 2 - Player.RADIUS:
-                    self.x += Player.VEL
+                    self.rect.x += self.VEL
+                if keys[pygame.K_LEFT] and self.rect.centerx - Player.VEL > BORDERS_PARAMETER + Player.RADIUS:
+                    self.rect.x -= self.VEL
 
-        if keys[pygame.K_UP] and self.y - Player.VEL > Player.RADIUS + BORDERS_PARAMETER:
-            self.y -= Player.VEL
-        if keys[pygame.K_DOWN] and self.y + Player.VEL < SCREEN_HEIGHT - Player.RADIUS - BORDERS_PARAMETER:
-            self.y += Player.VEL
-        self.center = (self.x, self.y)
-        self.rect = self.image.get_rect(center=self.center)
+        if keys[pygame.K_UP] and self.rect.centery - Player.VEL > Player.RADIUS + BORDERS_PARAMETER:
+            self.rect.y -= Player.VEL
+        if keys[pygame.K_DOWN] and self.rect.centery + Player.VEL < SCREEN_HEIGHT - Player.RADIUS - BORDERS_PARAMETER:
+            self.rect.y += Player.VEL
 
     def check_collision(self, team):
         collision = False
@@ -60,4 +53,4 @@ class Player(pygame.sprite.Sprite):
                     self.color = 'Blue'
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, self.center, self.radius)
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)

@@ -1,9 +1,14 @@
-class Obstacle:
-    def __init__(self, width, height, x, y):
-        self.obstacle_width = width
-        self.obstacle_height = height
-        self.obstacle_x = x
-        self.obstacle_y = y
+import pygame.draw
 
-    def return_parameters(self):
-        return self.obstacle_x, self.obstacle_y, self.obstacle_width, self.obstacle_height
+
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self, width, height, x, y, color):
+        super().__init__()
+        self.image = pygame.Surface((width, height))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.color = color
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self.rect)
