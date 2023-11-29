@@ -1,5 +1,6 @@
 import pygame
-from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, RED, BLUE, PINK
+from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER
+
 
 class Player(pygame.sprite.Sprite):
   
@@ -14,9 +15,9 @@ class Player(pygame.sprite.Sprite):
         self.center = (x, y)
         self.radius = Player.RADIUS
         if team:
-            self.color = RED
+            self.color = 'Red'
         else:
-            self.color = BLUE
+            self.color = 'Blue'
         self.image = pygame.Surface((Player.RADIUS * 2, Player.RADIUS * 2))
         self.rect = self.image.get_rect(center=self.center)
 
@@ -50,14 +51,13 @@ class Player(pygame.sprite.Sprite):
             if pygame.sprite.collide_circle(self, player) and player != self:
                 collision = True
         if collision:
-            self.color = PINK
+            self.color = 'Pink'
         else:
             match self.team:
                 case 1:
-                    self.color = RED
+                    self.color = 'Red'
                 case 0:
-                    self.color = BLUE
+                    self.color = 'Blue'
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.center, self.radius)
-

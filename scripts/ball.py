@@ -1,12 +1,12 @@
 import pygame
-from constant_values import BLACK, SCREEN_WIDTH, SCREEN_HEIGHT
+from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT
 import math
 from random import randint
 
 
 class Ball:
     MAX_VEL = 5
-    COLOR = BLACK
+    COLOR = 'Black'
 #    RADIUS_BALL = 10
 
     def __init__(self, x, y, radius):

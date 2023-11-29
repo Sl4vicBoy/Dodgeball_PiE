@@ -3,15 +3,12 @@ from random import randint, seed
 from player import Player
 from obstacle import Obstacle
 from ball import Ball
-
-from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, GREEN, VIOLET
+from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BORDERS_PARAMETER, LEFT, RIGHT
 
 pygame.init()
 
-FPS = 60
-
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Dodge-ball")
+pygame.display.set_caption('Dodge-ball')
 
 middle_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH // 2 - BORDERS_PARAMETER // 2, 0)
 team_right_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH - BORDERS_PARAMETER, 0)
@@ -19,18 +16,19 @@ team_left_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, 0, 0)
 up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0)
 down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER)
 
+
 def draw(screen, players, ball):
     # Draw background
-    screen.fill(GREEN)
+    screen.fill('Green')
     for player in players:
         player.draw(screen)
     ball.draw(screen)    
 
-    pygame.draw.rect(screen, VIOLET, middle_line.return_parameters())
-    pygame.draw.rect(screen, VIOLET, team_right_line.return_parameters())
-    pygame.draw.rect(screen, VIOLET, team_left_line.return_parameters())
-    pygame.draw.rect(screen, VIOLET, up_line.return_parameters())
-    pygame.draw.rect(screen, VIOLET, down_line.return_parameters())
+    pygame.draw.rect(screen, 'fuchsia', middle_line.return_parameters())
+    pygame.draw.rect(screen, 'fuchsia', team_right_line.return_parameters())
+    pygame.draw.rect(screen, 'fuchsia', team_left_line.return_parameters())
+    pygame.draw.rect(screen, 'fuchsia', up_line.return_parameters())
+    pygame.draw.rect(screen, 'fuchsia', down_line.return_parameters())
     pygame.display.update()
 
 
@@ -68,15 +66,14 @@ def main():
 
     print(f"Team with ball: {'RIGHT' if team_with_ball == RIGHT else 'LEFT'}")
 
-    #docelowo pozniej sie cos z tym madrego zrobi
+    # docelowo pozniej sie cos z tym madrego zrobi
     all_players = pygame.sprite.Group()
     all_players.add(team_right, team_left)
     ball = Ball(SCREEN_WIDTH//2, SCREEN_HEIGHT//2, 6)
-    
+
     while running:
         clock.tick(FPS)
         draw(SCREEN, all_players, ball)
-        pygame.display.update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -95,7 +92,7 @@ def main():
         ball.handle_collision_wall()
         for player in all_players:
             ball.handle_collision_player(player)
-
+        pygame.display.update()
     pygame.quit()
 
 
