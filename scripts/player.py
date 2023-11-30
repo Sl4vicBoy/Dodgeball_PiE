@@ -38,7 +38,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN] and self.rect.centery + Player.VEL < SCREEN_HEIGHT - Player.RADIUS - BORDERS_PARAMETER:
             self.rect.y += Player.VEL
 
-    def check_collision(self, team):
+    def check_collision_player(self, team):
         collision = False
         for player in team:
             if pygame.sprite.collide_circle(self, player) and player != self:
@@ -51,6 +51,7 @@ class Player(pygame.sprite.Sprite):
                     self.color = 'Red'
                 case 0:
                     self.color = 'Blue'
-
+    def check_collision_obstacle(self,obstacles):
+        pass
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)

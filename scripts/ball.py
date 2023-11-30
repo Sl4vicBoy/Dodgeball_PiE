@@ -30,3 +30,6 @@ class Ball(pygame.sprite.Sprite):
         player = pygame.sprite.spritecollideany(self, all_players)
         if player:
             self.vel.xy = (0, 0)
+    
+    def check_collission_obstacle(self,obstacles):
+        pass

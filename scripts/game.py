@@ -88,9 +88,9 @@ def main():
         player_in_control.move()
 
         if player_in_control.team == RIGHT:
-            player_in_control.check_collision(team_right)
+            player_in_control.check_collision_player(team_right)
         else:
-            player_in_control.check_collision(team_left)
+            player_in_control.check_collision_player(team_left)
 
         ball.move()
         ball.check_collision_wall()
