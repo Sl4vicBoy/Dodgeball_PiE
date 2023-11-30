@@ -16,27 +16,24 @@ class Player(pygame.sprite.Sprite):
             self.color = 'Blue'
         self.image = pygame.Surface((Player.RADIUS * 2, Player.RADIUS * 2))
         self.rect = self.image.get_rect(center=(x, y))
-
-    def move(self):
+    
+    def move(self,obstacles):
         keys = pygame.key.get_pressed()
-        match self.team:
-            case 1:  # RIGHT
-                if keys[pygame.K_RIGHT] and self.rect.centerx + Player.VEL < SCREEN_WIDTH - BORDERS_PARAMETER - Player.RADIUS:
-                    self.rect.move(self.VEL, 0)
-                if keys[pygame.K_LEFT] and self.rect.centerx - Player.VEL > (SCREEN_WIDTH + BORDERS_PARAMETER) / 2 + Player.RADIUS:
-                    self.rect.x -= self.VEL
+        current_x = self.rect.x
+        current_y = self.rect.y
+        
+        if keys[pygame.K_RIGHT]:
+                self.rect.x += self.VEL
+        elif keys[pygame.K_LEFT]:
+                self.rect.x -= self.VEL
+        elif keys[pygame.K_UP]:
+                self.rect.y -= self.VEL
+        elif keys[pygame.K_DOWN]:
+                self.rect.y += self.VEL
+        
+        if pygame.sprite.spritecollide(self, obstacles, False):
+            self.rect.x, self.rect.y = current_x, current_y
 
-            case 0:  # LEFT
-                if keys[pygame.K_RIGHT] and self.rect.centerx + Player.VEL < (
-                        SCREEN_WIDTH - BORDERS_PARAMETER) / 2 - Player.RADIUS:
-                    self.rect.x += self.VEL
-                if keys[pygame.K_LEFT] and self.rect.centerx - Player.VEL > BORDERS_PARAMETER + Player.RADIUS:
-                    self.rect.x -= self.VEL
-
-        if keys[pygame.K_UP] and self.rect.centery - Player.VEL > Player.RADIUS + BORDERS_PARAMETER:
-            self.rect.y -= Player.VEL
-        if keys[pygame.K_DOWN] and self.rect.centery + Player.VEL < SCREEN_HEIGHT - Player.RADIUS - BORDERS_PARAMETER:
-            self.rect.y += Player.VEL
 
     def check_collision_player(self, team):
         collision = False
@@ -51,7 +48,6 @@ class Player(pygame.sprite.Sprite):
                     self.color = 'Red'
                 case 0:
                     self.color = 'Blue'
-    def check_collision_obstacle(self,obstacles):
-        pass
+    
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)

@@ -10,7 +10,7 @@ class Obstacle(pygame.sprite.Sprite): #niezniszczalna przeszkoda
         self.rect.y = y
         self.color = color
         self.collission_ball = True
-        self.collision_player = True
+        
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
