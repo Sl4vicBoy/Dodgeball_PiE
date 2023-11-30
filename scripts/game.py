@@ -31,13 +31,13 @@ def main():
     team_left_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, 0, 0, BORDER_COLOR)
     up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0, BORDER_COLOR)
     down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER, BORDER_COLOR)
-
+    
     walls = pygame.sprite.Group()
     walls.add(team_left_line, team_right_line, up_line, down_line)
 
     obstacles = pygame.sprite.Group()
     obstacles.add(middle_line)
-
+    
     all_objects = pygame.sprite.Group()
     all_objects.add(walls, obstacles)
 
@@ -85,7 +85,7 @@ def main():
                 break
 
         player_in_control = team_left[0]
-        player_in_control.move()
+        player_in_control.move(all_objects)
 
         if player_in_control.team == RIGHT:
             player_in_control.check_collision_player(team_right)
