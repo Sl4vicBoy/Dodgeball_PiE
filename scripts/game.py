@@ -85,12 +85,12 @@ def main():
                 break
 
         player_in_control = team_left[0]
-        player_in_control.move(all_objects)
+        
 
         if player_in_control.team == RIGHT:
-            player_in_control.check_collision_player(team_right)
+            player_in_control.move(all_objects,team_right)
         else:
-            player_in_control.check_collision_player(team_left)
+            player_in_control.move(all_objects,team_left)
 
         ball.move()
         ball.check_collision_wall()

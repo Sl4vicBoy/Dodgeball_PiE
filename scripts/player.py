@@ -16,8 +16,16 @@ class Player(pygame.sprite.Sprite):
             self.color = 'Blue'
         self.image = pygame.Surface((Player.RADIUS * 2, Player.RADIUS * 2))
         self.rect = self.image.get_rect(center=(x, y))
+
+    def check_collision_player(self, team):
+        collision = False
+        for player in team:
+            if pygame.sprite.collide_circle(self, player) and player != self:
+                collision = True
+        return collision
+
     
-    def move(self,obstacles):
+    def move(self,obstacles,team):
         keys = pygame.key.get_pressed()
         current_x = self.rect.x
         current_y = self.rect.y
@@ -31,23 +39,14 @@ class Player(pygame.sprite.Sprite):
         elif keys[pygame.K_DOWN]:
                 self.rect.y += self.VEL
         
-        if pygame.sprite.spritecollide(self, obstacles, False):
+        if pygame.sprite.spritecollide(self, obstacles, False) or self.check_collision_player(team):
             self.rect.x, self.rect.y = current_x, current_y
+        
+             
+    
 
-
-    def check_collision_player(self, team):
-        collision = False
-        for player in team:
-            if pygame.sprite.collide_circle(self, player) and player != self:
-                collision = True
-        if collision:
-            self.color = 'Pink'
-        else:
-            match self.team:
-                case 1:
-                    self.color = 'Red'
-                case 0:
-                    self.color = 'Blue'
+    
+        
     
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
