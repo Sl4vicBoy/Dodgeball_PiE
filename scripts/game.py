@@ -3,7 +3,7 @@ from random import randint, seed
 from player import Player
 from obstacle import Obstacle
 from ball import Ball
-from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BORDERS_PARAMETER, LEFT, RIGHT, BORDER_COLOR
+from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BORDERS_PARAMETER, LEFT, RIGHT, BORDER_COLOR, MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE
 
 pygame.init()
 
@@ -37,9 +37,21 @@ def main():
 
     obstacles = pygame.sprite.Group()
     obstacles.add(middle_line)
+
+    undestroyable_obstacles = pygame.sprite.Group()
+    
+    for _ in range(0, 3):
+        x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
+        y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
+        new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE,MAX_HEIGHT_OBSTACLE,x,y)
+        while pygame.sprite.spritecollide(new_obstacle, obstacles, False):
+            x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
+            y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
+            new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE,MAX_HEIGHT_OBSTACLE,x,y)
+        undestroyable_obstacles.add(new_obstacle)
     
     all_objects = pygame.sprite.Group()
-    all_objects.add(walls, obstacles)
+    all_objects.add(walls, obstacles,undestroyable_obstacles)
 
     seed()
     team_with_ball = randint(LEFT, RIGHT)

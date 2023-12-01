@@ -1,8 +1,9 @@
 import pygame.draw
-
+from random import randint
+from constant_values import BORDER_COLOR, SCREEN_HEIGHT, SCREEN_WIDTH
 
 class Obstacle(pygame.sprite.Sprite): #niezniszczalna przeszkoda 
-    def __init__(self, width, height, x, y, color):
+    def __init__(self, width = 10, height = 10, x = 10, y = 10, color = BORDER_COLOR):
         super().__init__() 
         self.image = pygame.Surface((width, height))
         self.rect = self.image.get_rect()
@@ -10,8 +11,9 @@ class Obstacle(pygame.sprite.Sprite): #niezniszczalna przeszkoda
         self.rect.y = y
         self.color = color
         self.collission_ball = True
-        
 
+    
+    
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
