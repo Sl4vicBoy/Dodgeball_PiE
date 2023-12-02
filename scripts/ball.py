@@ -1,5 +1,5 @@
 import pygame
-from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT
+from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 import math
 from random import randint
 
@@ -31,5 +31,28 @@ class Ball(pygame.sprite.Sprite):
         if player:
             self.vel.xy = (0, 0)
     
-    def check_collission_obstacle(self,obstacles):
-        pass
+    
+    def check_collision_obstacle(self, obstacles):
+       
+        collision = pygame.sprite.spritecollide(self, obstacles, False)
+        if collision:
+            obstacle = collision[0]
+
+            if self.vel.x > 0:  
+                self.rect.right = obstacle.rect.left
+            elif self.vel.x < 0:  
+                self.rect.left = obstacle.rect.right
+
+            if self.vel.y > 0:  
+                self.rect.bottom = obstacle.rect.top
+            elif self.vel.y < 0:  
+                self.rect.top = obstacle.rect.bottom
+
+            self.vel.x *= -1
+            self.vel.y *= -1
+
+
+
+
+
+

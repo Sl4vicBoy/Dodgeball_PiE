@@ -1,7 +1,7 @@
 import pygame
 from random import randint, seed
 from player import Player
-from obstacle import Obstacle
+from obstacle import Obstacle, Midline
 from ball import Ball
 from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BORDERS_PARAMETER, LEFT, RIGHT, BORDER_COLOR, MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE
 
@@ -11,22 +11,35 @@ SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Dodge-ball')
 
 
-def draw(screen, all_objects, all_players, ball):
+def draw(screen, all_objects, all_players, ball, middle_line):
     # Draw background
     screen.fill('Green')
     for obstacle in all_objects:
         obstacle.draw(screen)
+    middle_line.draw_mid(screen)
     for player in all_players:
         player.draw(screen)
     ball.draw(screen)
     all_players.update()
 
-
+def generate_undestroyable_obstacles(obstacles,all_players,undestroyable_obstacles):
+    for _ in range(0, 3):
+        x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
+        y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
+        new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE,MAX_HEIGHT_OBSTACLE,x,y)
+        collision_detection_group = pygame.sprite.Group()
+        collision_detection_group.add(obstacles,all_players,undestroyable_obstacles)
+        while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
+            x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
+            y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
+            new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE,MAX_HEIGHT_OBSTACLE,x,y)
+        undestroyable_obstacles.add(new_obstacle)
+    
 def main():
     running = True
     clock = pygame.time.Clock()
 
-    middle_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH // 2 - BORDERS_PARAMETER // 2, 0, BORDER_COLOR)
+    middle_line = Midline(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH // 2 - BORDERS_PARAMETER // 2, 0, BORDER_COLOR)
     team_right_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH - BORDERS_PARAMETER, 0, BORDER_COLOR)
     team_left_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, 0, 0, BORDER_COLOR)
     up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0, BORDER_COLOR)
@@ -38,20 +51,8 @@ def main():
     obstacles = pygame.sprite.Group()
     obstacles.add(middle_line)
 
-    undestroyable_obstacles = pygame.sprite.Group()
-    
-    for _ in range(0, 3):
-        x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
-        y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-        new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE,MAX_HEIGHT_OBSTACLE,x,y)
-        while pygame.sprite.spritecollide(new_obstacle, obstacles, False):
-            x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
-            y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-            new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE,MAX_HEIGHT_OBSTACLE,x,y)
-        undestroyable_obstacles.add(new_obstacle)
-    
     all_objects = pygame.sprite.Group()
-    all_objects.add(walls, obstacles,undestroyable_obstacles)
+    all_objects.add(walls, obstacles)
 
     seed()
     team_with_ball = randint(LEFT, RIGHT)
@@ -86,10 +87,15 @@ def main():
     all_players = pygame.sprite.Group()
     all_players.add(team_right, team_left)
     ball = Ball(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
-
+      
+    undestroyable_obstacles = pygame.sprite.Group()
+    generate_undestroyable_obstacles(obstacles,all_players,undestroyable_obstacles)
+    
+    all_objects.add(undestroyable_obstacles)
+   
     while running:
         clock.tick(FPS)
-        draw(SCREEN, all_objects, all_players, ball)
+        draw(SCREEN, all_objects, all_players, ball, middle_line)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -104,8 +110,10 @@ def main():
         else:
             player_in_control.move(all_objects,team_left)
 
+        
         ball.move()
         ball.check_collision_wall()
+        ball.check_collision_obstacle(undestroyable_obstacles)
         ball.check_collision_player(all_players)
         pygame.display.flip()
     pygame.quit()
