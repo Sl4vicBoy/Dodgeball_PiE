@@ -11,16 +11,17 @@ class Obstacle(pygame.sprite.Sprite): #niezniszczalna przeszkoda
         self.rect.y = y
         self.color = color
         self.collission_ball = True
-
-    
+     
     
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
 class Midline(Obstacle): # linia po srodku 
     def __init__(self,width,height,x,y,color):
-        super().__init__()
+        super().__init__(width, height, x, y, color)
         self.collision_ball = False
+    def draw_mid(self,screen):
+        self.draw(screen)
         
     
 
