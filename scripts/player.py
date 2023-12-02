@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
             self.color = 'Blue'
         self.image = pygame.Surface((Player.RADIUS * 2, Player.RADIUS * 2))
         self.rect = self.image.get_rect(center=(x, y))
-
+    
     def check_collision_player(self, team):
         collision = False
         for player in team:
