@@ -1,5 +1,5 @@
 import pygame
-from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
+from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT
 import math
 from random import randint
 
