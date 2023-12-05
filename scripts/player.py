@@ -29,7 +29,6 @@ class Player(pygame.sprite.Sprite):
         current_x = self.rect.x
         current_y = self.rect.y
 
-        
         x_movement = 0
         y_movement = 0
 
@@ -48,6 +47,5 @@ class Player(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(self, obstacles, False) or self.check_collision_player(team):
             self.rect.x, self.rect.y = current_x, current_y
 
-        
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)

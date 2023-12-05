@@ -30,8 +30,7 @@ class Ball(pygame.sprite.Sprite):
         player = pygame.sprite.spritecollideany(self, all_players)
         if player:
             self.vel.xy = (0, 0)
-    
-    
+
     def check_collision_obstacle(self, obstacles):
        
         collision = pygame.sprite.spritecollide(self, obstacles, False)
