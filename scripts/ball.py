@@ -1,6 +1,5 @@
 import pygame
 from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT
-import math
 from random import randint
 
 
@@ -26,10 +25,11 @@ class Ball(pygame.sprite.Sprite):
         if self.rect.right >= SCREEN_WIDTH or self.rect.left <= 0:
             self.vel.x *= -1
 
-    def check_collision_player(self, all_players):
-        player = pygame.sprite.spritecollideany(self, all_players)
+    def check_collision_player(self, players_playing):
+        player = pygame.sprite.spritecollideany(self, players_playing)
         if player:
-            self.vel.xy = (0, 0)
+            # self.vel.xy = (0, 0)
+            player.bench = True
 
     def check_collision_obstacle(self, obstacles):
        

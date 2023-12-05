@@ -1,15 +1,15 @@
 import pygame
-from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER
 
 
 class Player(pygame.sprite.Sprite):
     RADIUS = 20
     VEL = 4
 
-    def __init__(self, team, x, y):
+    def __init__(self, team, x, y, bench=False):
         pygame.sprite.Sprite.__init__(self)  # konstruktor klasy bazowej jak cos
         self.team = int(team)
         self.radius = Player.RADIUS
+        self.bench = bench
         if team:
             self.color = 'Red'
         else:
