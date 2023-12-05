@@ -60,7 +60,7 @@ def endgame(winner):
     font = pygame.font.Font("freesansbold.ttf", 45)
     over_game = pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
     pygame.draw.rect(SCREEN, (0, 0, 0), over_game)
-    over_game_text = font.render("Congratulations!", False,(255, 255, 255))
+    over_game_text = font.render("Congratulations!", False, (255, 255, 255))
     over_game_text_rect = over_game_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 45))
     SCREEN.blit(over_game_text, over_game_text_rect)
     if winner:
@@ -69,6 +69,8 @@ def endgame(winner):
         won = font.render("Team Left WON!", False, (255, 255, 255))
     won_rect = won.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 45))
     SCREEN.blit(won, won_rect)
+    restart = font.render("To reset game click R", False, (255, 255, 255))
+    SCREEN.blit(restart, restart.get_rect())
     pygame.display.flip()
 
 
@@ -150,24 +152,24 @@ def main():
             ball.check_collision_obstacle(all_obstacles)
             ball.check_collision_player(players_playing)
             check_benched(players_playing, bench, team_left, team_right)
-
-            if not team_left or team_right:
+            if not team_left or not team_right:
                 stage = ENDGAME
 
         elif stage == ENDGAME:
             if not team_left:
-                endgame(team_left)
+                endgame(RIGHT)
             if not team_right:
-                endgame(team_right)
+                endgame(LEFT)
             keys = pygame.key.get_pressed()
-
             if keys[pygame.K_r]:
                 for player in bench:
-                    if player.team == RIGHT:
-                        team_right.append(player)
                     if player.team == LEFT:
                         team_left.append(player)
-                ball.rect.move(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+                    if player.team == RIGHT:
+                        team_right.append(player)
+                    players_playing.add(player)
+                    player.bench = False
+                ball.rect.center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
                 stage = GAME
 
         pygame.display.flip()
