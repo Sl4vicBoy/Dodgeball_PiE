@@ -1,3 +1,5 @@
+from typing import List
+
 import pygame
 from random import randint, seed
 from player import Player
@@ -45,6 +47,7 @@ def main():
     team_with_ball = randint(LEFT, RIGHT)
     team_left = []
     team_right = []
+    all_players = pygame.sprite.Group()
 
     players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
                                       (7 * SCREEN_WIDTH / 10, SCREEN_HEIGHT / 2),
@@ -71,27 +74,31 @@ def main():
 
     print(f"Team with ball: {'RIGHT' if team_with_ball == RIGHT else 'LEFT'}")
 
-    all_players = pygame.sprite.Group()
     all_players.add(team_right, team_left)
     ball = Ball(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+
+    walls = pygame.sprite.Group()
+    undestroyable_obstacles = pygame.sprite.Group()
+    obstacles_player = pygame.sprite.Group()
+    all_obstacles = pygame.sprite.Group()
 
     middle_line = Midline(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH // 2 - BORDERS_PARAMETER // 2, 0, BORDER_COLOR)
     team_right_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH - BORDERS_PARAMETER, 0, BORDER_COLOR)
     team_left_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, 0, 0, BORDER_COLOR)
     up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0, BORDER_COLOR)
     down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER, BORDER_COLOR)
-    
-    walls = pygame.sprite.Group()
+
     walls.add(team_left_line, team_right_line, up_line, down_line)
+    all_obstacles.add(walls)
 
-    undestroyable_obstacles = pygame.sprite.Group()
+    generate_undestroyable_obstacles(all_obstacles, all_players, undestroyable_obstacles)
+    all_obstacles.add(undestroyable_obstacles)
 
-    obstacles_ball = pygame.sprite.Group(walls, undestroyable_obstacles)
-    obstacles_player = pygame.sprite.Group(obstacles_ball, middle_line)
+    obstacles_player.add(all_obstacles, middle_line)
 
     while running:
         clock.tick(FPS)
-        draw(SCREEN, obstacles_player, all_players, ball, middle_line)
+        draw(SCREEN, all_obstacles, all_players, ball, middle_line)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
