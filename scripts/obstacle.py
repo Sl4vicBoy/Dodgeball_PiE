@@ -5,9 +5,11 @@ from constant_values import BORDER_COLOR, SCREEN_HEIGHT, SCREEN_WIDTH
 
 class Obstacle(pygame.sprite.Sprite): #niezniszczalna przeszkoda 
     def __init__(self, width = 10, height = 10, x = 10, y = 10, color = BORDER_COLOR):
-        super().__init__() 
+        super().__init__()
         self.image = pygame.Surface((width, height))
-        self.rect = self.image.get_rect(center=(x, y))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.color = color
         self.collision_ball = True
 
@@ -16,7 +18,7 @@ class Obstacle(pygame.sprite.Sprite): #niezniszczalna przeszkoda
 
 
 class Midline(Obstacle): # linia po srodku 
-    def __init__(self, width, height, x, y, color):
+    def __init__(self, width, height, x, y, color = 'violet'):
         super().__init__(width, height, x, y, color)
         self.collision_ball = False
 
