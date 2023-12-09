@@ -39,8 +39,6 @@ class Ball(pygame.sprite.Sprite):
             
                 # Check left and right sides of the obstacle
             if self.rect.bottom <= obstacle.rect.bottom + 2*self.RADIUS and self.rect.top >= obstacle.rect.top - 2* self.RADIUS :
-                    
-    # Rest of your code...
 
                     if self.rect.right <= obstacle.rect.left:
                         self.rect.center -= (2*self.dvel.x,0)
