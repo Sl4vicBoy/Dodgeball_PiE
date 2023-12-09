@@ -116,7 +116,8 @@ def main():
     walls = pygame.sprite.Group()
     undestroyable_obstacles = pygame.sprite.Group()
     obstacles_player = pygame.sprite.Group()
-    all_obstacles = pygame.sprite.Group()
+    ball_obstacles = pygame.sprite.Group()
+    
 
     middle_line = Midline(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH // 2 - BORDERS_PARAMETER // 2, 0, BORDER_COLOR)
     team_right_line = Obstacle(BORDERS_PARAMETER, SCREEN_HEIGHT, SCREEN_WIDTH - BORDERS_PARAMETER, 0, BORDER_COLOR)
@@ -125,11 +126,11 @@ def main():
     down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER, BORDER_COLOR)
 
     walls.add(team_left_line, team_right_line, up_line, down_line)
+    obstacles_player.add(walls,middle_line)
+    generate_undestroyable_obstacles(obstacles_player, players_playing, undestroyable_obstacles)
+    ball_obstacles.add(undestroyable_obstacles)
 
-    generate_undestroyable_obstacles(all_obstacles, players_playing, undestroyable_obstacles)
-    all_obstacles.add(undestroyable_obstacles)
-
-    obstacles_player.add(all_obstacles, middle_line, walls)
+    obstacles_player.add(undestroyable_obstacles)
     stage = GAME
     while running:
         for event in pygame.event.get():
@@ -141,7 +142,7 @@ def main():
             pass
 
         elif stage == GAME:
-            draw(walls, all_obstacles, players_playing, ball, middle_line)
+            draw(walls, obstacles_player, players_playing, ball, middle_line)
 
             if team_left:
                 player_in_control = team_left[0]
@@ -149,7 +150,7 @@ def main():
 
             ball.move()
             ball.check_collision_wall()
-            ball.check_collision_obstacle(all_obstacles)
+            ball.check_collision_obstacle(ball_obstacles) 
             ball.check_collision_player(players_playing)
             check_benched(players_playing, bench, team_left, team_right)
             if not team_left or not team_right:
