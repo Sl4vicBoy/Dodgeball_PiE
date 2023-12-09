@@ -1,5 +1,5 @@
 import pygame
-from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT
+from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from random import randint
 
 
@@ -9,9 +9,10 @@ class Ball(pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.vel = pygame.Vector2(randint(3, 5), randint(0, 5))
+        self.vel = pygame.Vector2(randint(3, 5), randint(1, 5))
         self.image = pygame.Surface((Ball.RADIUS * 2, Ball.RADIUS * 2))
         self.rect = self.image.get_rect(center=(x, y))
+        self.dvel = pygame.Vector2(self.vel.x/(FPS**2),self.vel.y/(FPS**2))
 
     def draw(self, screen):
         pygame.draw.circle(screen, Ball.COLOR, self.rect.center, Ball.RADIUS)
@@ -30,25 +31,39 @@ class Ball(pygame.sprite.Sprite):
         if player:
             # self.vel.xy = (0, 0)
             player.bench = True
-
     def check_collision_obstacle(self, obstacles):
-       
         collision = pygame.sprite.spritecollide(self, obstacles, False)
+        
         if collision:
             obstacle = collision[0]
+            print(f"self.rect.bottom: {self.rect.bottom}, obstacle.rect.bottom: {obstacle.rect.bottom}")
+            print(f"self.rect.top: {self.rect.top}, obstacle.rect.top: {obstacle.rect.top}")
+            
+                # Check left and right sides of the obstacle
+            if self.rect.bottom <= obstacle.rect.bottom + 2*self.RADIUS and self.rect.top >= obstacle.rect.top - 2* self.RADIUS :
+                    print(f"self.rect.bottom: {self.rect.bottom}, obstacle.rect.bottom: {obstacle.rect.bottom}")
+                    print(f"self.rect.top: {self.rect.top}, obstacle.rect.top: {obstacle.rect.top}")
+    # Rest of your code...
 
-            if self.vel.x > 0:  
-                self.rect.right = obstacle.rect.left
-            elif self.vel.x < 0:  
-                self.rect.left = obstacle.rect.right
+                    if self.rect.right <= obstacle.rect.left:
+                        self.rect.center -= (2*self.dvel.x,0)
+                        self.vel.x *= -1
+                    elif self.rect.left >= obstacle.rect.right:
+                         self.rect.x += 2*self.dvel.x
+                         self.vel.x *= -1
+                    self.vel.x *= -1
 
-            if self.vel.y > 0:  
-                self.rect.bottom = obstacle.rect.top
-            elif self.vel.y < 0:  
-                self.rect.top = obstacle.rect.bottom
+            if self.rect.x in range(obstacle.rect.left, obstacle.rect.right + 1):
+                # Check top and bottom sides of the obstacle
+                if self.rect.y >= obstacle.rect.centery:
+                    self.rect.y += self.dvel.y
+                    self.vel.y *= -1
+                elif self.rect.y <= obstacle.rect.centery:
+                    self.rect.y -= self.dvel.y
+                    self.vel.y *= -1
+           
 
-            self.vel.x *= -1
-            self.vel.y *= -1
+
 
 
 
