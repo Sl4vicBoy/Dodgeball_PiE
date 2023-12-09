@@ -11,7 +11,8 @@ class Obstacle(pygame.sprite.Sprite):  # niezniszczalna przeszkoda
         self.rect.y = y
         self.color = color
         self.collision_ball = True
-
+        self.centerx = x + width / 2
+        self.centery = y + height / 2
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
