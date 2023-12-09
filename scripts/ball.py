@@ -36,13 +36,10 @@ class Ball(pygame.sprite.Sprite):
         
         if collision:
             obstacle = collision[0]
-            print(f"self.rect.bottom: {self.rect.bottom}, obstacle.rect.bottom: {obstacle.rect.bottom}")
-            print(f"self.rect.top: {self.rect.top}, obstacle.rect.top: {obstacle.rect.top}")
             
                 # Check left and right sides of the obstacle
             if self.rect.bottom <= obstacle.rect.bottom + 2*self.RADIUS and self.rect.top >= obstacle.rect.top - 2* self.RADIUS :
-                    print(f"self.rect.bottom: {self.rect.bottom}, obstacle.rect.bottom: {obstacle.rect.bottom}")
-                    print(f"self.rect.top: {self.rect.top}, obstacle.rect.top: {obstacle.rect.top}")
+                    
     # Rest of your code...
 
                     if self.rect.right <= obstacle.rect.left:
