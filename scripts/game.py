@@ -17,6 +17,11 @@ PREPARATION = 1
 GAME = 2
 ENDGAME = 3
 
+hit_left = 0
+hit_right = 0
+catch_left = 0
+catch_right = 0
+
 
 def draw(walls, all_objects, all_players, ball, middle_line):
     # Draw background
@@ -84,6 +89,9 @@ def main():
     running = True
     clock = pygame.time.Clock()
 
+    games_won_left = 0
+    games_won_right = 0
+
     seed()
     team_left = []
     team_right = []
@@ -150,6 +158,8 @@ def main():
             generate_undestroyable_obstacles(obstacles_player, all_players, undestroyable_obstacles)
             obstacles_player.add(undestroyable_obstacles)
             ball_obstacles.add(undestroyable_obstacles)
+
+            ball.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
             ball.def_rand_vel()
 
             stage = GAME
@@ -172,8 +182,10 @@ def main():
         elif stage == ENDGAME:
             if not team_left:
                 endgame(RIGHT)
+                games_won_right += 1
             if not team_right:
                 endgame(LEFT)
+                games_won_left += 1
             keys = pygame.key.get_pressed()
             if keys[pygame.K_r]:
                 team_left.clear()
@@ -186,8 +198,6 @@ def main():
                 undestroyable_obstacles.empty()
                 obstacles_player.empty()
                 ball_obstacles.empty()
-
-                keys = pygame.key.get_pressed()
                 stage = PREPARATION
 
         pygame.display.flip()
