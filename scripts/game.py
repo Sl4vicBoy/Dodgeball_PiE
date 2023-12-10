@@ -26,16 +26,11 @@ catch_right = 0
 def draw(walls, all_objects, all_players, ball, middle_line):
     # Draw background
     SCREEN.fill('Green')
-    #for obstacle in all_objects:
-    #   obstacle.draw(SCREEN)
-    all_objects.draw(SCREEN)
-    middle_line.draw_mid(SCREEN)
-    #for wall in walls:
-    #    wall.draw(SCREEN)
+
+    middle_line.draw(SCREEN)
     walls.draw(SCREEN)
-    # for player in players_playing:
-    #    player.draw(SCREEN)
-    players_playing.draw(SCREEN)
+    all_objects.draw(SCREEN)
+    all_players.draw(SCREEN)
     ball.draw(SCREEN)
     all_players.update()
 
@@ -59,9 +54,13 @@ def check_benched(players_playing, bench_left, bench_right, team_left, team_righ
         if player.bench:
             players_playing.remove(player)
             if player.team == RIGHT:
+                player.image = player.player_images[1]
+                player.rect = player.image.get_rect()
                 team_right.remove(player)
                 bench_right.append(player)
             if player.team == LEFT:
+                player.image = player.player_images[0]
+                player.rect = player.image.get_rect()
                 team_left.remove(player)
                 bench_left.append(player)
     for count, player in enumerate(bench_left):
