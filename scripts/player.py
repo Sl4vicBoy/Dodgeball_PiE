@@ -31,8 +31,6 @@ class Player(pygame.sprite.Sprite):
             self.image = player_img_right_direction
 
         self.rect = self.image.get_rect(center=(x, y))
-        player_mask = pygame.mask.from_surface(self.image)
-        mask_img = player_mask.to_surface()
 
     def check_collision_player(self, team):
         collision = False
@@ -72,22 +70,22 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT] and self.direction == "right":
             x_movement += self.VEL
         elif keys[pygame.K_RIGHT]:
-            x_movement += 0.8*self.VEL
+            x_movement += 0.8 * self.VEL
 
         if keys[pygame.K_LEFT] and self.direction == "left":
             x_movement -= self.VEL
         elif keys[pygame.K_LEFT]:
-            x_movement -= 0.8*self.VEL
+            x_movement -= 0.8 * self.VEL
 
         if keys[pygame.K_UP] and self.direction == "up":
             y_movement -= self.VEL
         elif keys[pygame.K_UP]:
-            y_movement -= 0.8*self.VEL
+            y_movement -= 0.8 * self.VEL
 
         if keys[pygame.K_DOWN] and self.direction == "down":
             y_movement += self.VEL
         elif keys[pygame.K_DOWN]:
-            y_movement += 0.8*self.VEL
+            y_movement += 0.8 * self.VEL
 
         self.rect.x += x_movement
         self.rect.y += y_movement
