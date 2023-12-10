@@ -33,5 +33,3 @@ class DestroyableObstacle(Obstacle):
     
     def destroy(self):
         pass
-
-

@@ -7,7 +7,7 @@ class Player(pygame.sprite.Sprite):
     VEL = 4
 
     def __init__(self, team, x, y, bench=False):
-        pygame.sprite.Sprite.__init__(self)  # konstruktor klasy bazowej jak cos
+        pygame.sprite.Sprite.__init__(self)
         self.team = int(team)
         self.radius = Player.RADIUS
         self.bench = bench
