@@ -26,13 +26,16 @@ catch_right = 0
 def draw(walls, all_objects, all_players, ball, middle_line):
     # Draw background
     SCREEN.fill('Green')
-    for obstacle in all_objects:
-        obstacle.draw(SCREEN)
+    #for obstacle in all_objects:
+    #   obstacle.draw(SCREEN)
+    all_objects.draw(SCREEN)
     middle_line.draw_mid(SCREEN)
-    for wall in walls:
-        wall.draw(SCREEN)
-    for player in all_players:
-        player.draw(SCREEN)
+    #for wall in walls:
+    #    wall.draw(SCREEN)
+    walls.draw(SCREEN)
+    # for player in players_playing:
+    #    player.draw(SCREEN)
+    players_playing.draw(SCREEN)
     ball.draw(SCREEN)
     all_players.update()
 
