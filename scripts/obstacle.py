@@ -21,9 +21,6 @@ class Midline(Obstacle):  # linia po srodku
     def __init__(self, width, height, x, y, color='violet'):
         super().__init__(width, height, x, y, color)
         self.collision_ball = False
-
-    def draw_mid(self, screen):
-        self.draw(screen)
         
 
 class DestroyableObstacle(Obstacle):
