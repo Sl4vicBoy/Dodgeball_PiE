@@ -44,7 +44,8 @@ class Ball(pygame.sprite.Sprite):
         if collision:
             obstacle = collision[0]
             # Check left and right sides of the obstacle
-            if self.rect.bottom <= obstacle.rect.bottom + 2*self.RADIUS and self.rect.top >= obstacle.rect.top - 2* self.RADIUS :
+            if (self.rect.bottom <= obstacle.rect.bottom + 2 * self.RADIUS and
+                    self.rect.top >= obstacle.rect.top - 2 * self.RADIUS):
 
                 if self.rect.right <= obstacle.rect.left:
                     self.rect.center -= (2 * self.dvel.x, 0)
