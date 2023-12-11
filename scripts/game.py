@@ -106,8 +106,10 @@ def main():
     undestroyable_obstacles = pygame.sprite.Group()
     obstacles_player = pygame.sprite.Group()
     ball_obstacles = pygame.sprite.Group()
+    ball_sprite = pygame.sprite.Group()
 
     ball = Ball(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+    ball_sprite.add(ball)
 
     players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
                                       (7 * SCREEN_WIDTH / 10, SCREEN_HEIGHT / 2),
@@ -167,7 +169,7 @@ def main():
             stage = GAME
 
         elif stage == GAME:
-            draw(walls, obstacles_player, all_players, ball, middle_line)
+            draw(walls, obstacles_player, all_players, ball_sprite, middle_line)
 
             if team_left:
                 player_in_control = team_left[0]

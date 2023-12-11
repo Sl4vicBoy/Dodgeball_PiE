@@ -59,7 +59,8 @@ class Player(pygame.sprite.Sprite):
             self.direction = "up"
             self.image = self.player_images[2]
             self.rect = self.image.get_rect(center=(self.rect.centerx,self.rect.centery))
-        if pygame.sprite.spritecollide(self, obstacles, False) or self.__check_collision_player__(team):
+        if (pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask)
+                or self.__check_collision_player__(team)):
             self.direction = prev_direction
             self.image = prev_img
             self.rect = prev_rect
@@ -97,5 +98,5 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += x_movement
         self.rect.y += y_movement
 
-        if pygame.sprite.spritecollide(self, obstacles, False) or self.__check_collision_player__(team):
+        if pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask) or self.__check_collision_player__(team):
             self.rect.x, self.rect.y = current_x, current_y
