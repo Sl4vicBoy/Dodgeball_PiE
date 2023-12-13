@@ -2,6 +2,7 @@ import pygame
 import os
 from math import sqrt
 
+
 class Player(pygame.sprite.Sprite):
     VEL = 4
 
@@ -46,19 +47,19 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_a] and self.direction != "left":
             self.direction = "left"
             self.image = self.player_images[1]
-            self.rect = self.image.get_rect(center=(self.rect.centerx,self.rect.centery))
+            self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
         if keys[pygame.K_d] and self.direction != "right":
             self.direction = "right"
             self.image = self.player_images[0]
-            self.rect = self.image.get_rect(center=(self.rect.centerx,self.rect.centery))
+            self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
         if keys[pygame.K_s] and self.direction != "down":
             self.direction = "down"
             self.image = self.player_images[3]
-            self.rect = self.image.get_rect(center=(self.rect.centerx,self.rect.centery))
+            self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
         if keys[pygame.K_w] and self.direction != "up":
             self.direction = "up"
             self.image = self.player_images[2]
-            self.rect = self.image.get_rect(center=(self.rect.centerx,self.rect.centery))
+            self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
         if pygame.sprite.spritecollide(self, obstacles, False) or self.__check_collision_player__(team):
             self.direction = prev_direction
             self.image = prev_img
@@ -97,10 +98,10 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += x_movement
         self.rect.y += y_movement
 
-        if pygame.sprite.spritecollide(self, obstacles, False) or self.__check_collision_player__(team):
+        if pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask) or self.__check_collision_player__(team):
             self.rect.x, self.rect.y = current_x, current_y
 
-    def catch_ball(self,ball):
+    def catch_ball(self, ball):
         key = pygame.key.get_pressed()
         x = self.rect.centerx
         y = self.rect.centery
