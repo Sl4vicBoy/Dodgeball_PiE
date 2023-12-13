@@ -172,6 +172,7 @@ def main():
             if team_left:
                 player_in_control = team_left[0]
                 player_in_control.move(obstacles_player, players_playing)
+                player_in_control.catch_ball(ball)
 
             ball.move()
             ball.check_collision_wall()
