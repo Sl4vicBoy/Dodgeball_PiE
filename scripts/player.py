@@ -104,7 +104,7 @@ class Player(pygame.sprite.Sprite):
         key = pygame.key.get_pressed()
         x = self.rect.centerx
         y = self.rect.centery
-        ball_player_distance = sqrt((x - ball.rect.x)**2+(y-ball.rect.y)**2)
+        ball_player_distance = sqrt((x - ball.rect.centerx)**2+(y-ball.rect.centery)**2)
 
         if key[pygame.K_SPACE] and (ball_player_distance <= 50):
             ball.vel = pygame.math.Vector2(0, 0)
