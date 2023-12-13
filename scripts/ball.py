@@ -1,7 +1,7 @@
 import pygame
+import os
 from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from random import uniform
-import os
 
 
 class Ball(pygame.sprite.Sprite):
@@ -31,7 +31,7 @@ class Ball(pygame.sprite.Sprite):
             self.vel.x *= -1
 
     def check_collision_player(self, players_playing):
-        collision = pygame.sprite.spritecollide(self, players_playing, False, pygame.sprite.collide_mask)
+        collision = pygame.sprite.spritecollide(self, players_playing, False)
         if collision:
             player = collision[0]
             # self.vel.xy = (0, 0)
@@ -39,7 +39,7 @@ class Ball(pygame.sprite.Sprite):
         return collision
 
     def check_collision_obstacle(self, obstacles):
-        collision = pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask)
+        collision = pygame.sprite.spritecollide(self, obstacles, False)
         
         if collision:
             obstacle = collision[0]

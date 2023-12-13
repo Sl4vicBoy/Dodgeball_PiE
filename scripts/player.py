@@ -98,7 +98,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += x_movement
         self.rect.y += y_movement
 
-        if pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask) or self.__check_collision_player__(team):
+        if pygame.sprite.spritecollide(self, obstacles, False) or self.__check_collision_player__(team):
             self.rect.x, self.rect.y = current_x, current_y
 
     def catch_ball(self, ball):
