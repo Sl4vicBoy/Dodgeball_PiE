@@ -10,7 +10,7 @@ class Ball(pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        ball_img = pygame.image.load(os.path.join('Assets', 'balls', 'basket-ball.png')).convert_alpha()
+        ball_img = pygame.image.load(os.path.join('scripts/Assets', 'balls', 'basket-ball.png')).convert_alpha()
         ball_img_scaled = pygame.transform.scale(ball_img, (self.DIAMETER, self.DIAMETER))
         self.image = ball_img_scaled
         self.rect = self.image.get_rect(center=(x, y))
