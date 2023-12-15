@@ -11,7 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.team = int(team)
         self.bench = bench
 
-        player_img = pygame.image.load(os.path.join('Assets', 'players', 'superswinka.png')).convert_alpha()
+        player_img = pygame.image.load(os.path.join('scripts/Assets', 'players', 'superswinka.png')).convert_alpha()
         player_img_scaled = pygame.transform.scale_by(player_img, 0.4)
 
         player_img_left_direction = pygame.transform.flip(player_img_scaled, True, False)
