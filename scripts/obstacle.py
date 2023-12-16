@@ -2,7 +2,7 @@ import pygame.draw
 from constant_values import BORDER_COLOR
 
 
-class Obstacle(pygame.sprite.Sprite):  # niezniszczalna przeszkoda
+class Obstacle(pygame.sprite.Sprite):
     def __init__(self, width, height, x, y, color=BORDER_COLOR):
         super().__init__()
         self.image = pygame.Surface((width, height))
@@ -11,16 +11,16 @@ class Obstacle(pygame.sprite.Sprite):  # niezniszczalna przeszkoda
         self.rect.x = x
         self.rect.y = y
         self.color = color
-        self.collision_ball = True
+        self.collision_ball = True#kolizja z pilka jest zawsze prawdziwa
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
 
-class Midline(Obstacle):  # linia po srodku
+class Midline(Obstacle):
     def __init__(self, width, height, x, y, color='violet'):
         super().__init__(width, height, x, y, color)
-        self.collision_ball = False
+        self.collision_ball = False#inny rodzaj obstacla ktory nie ingeruje z pilka
         
 
 class DestroyableObstacle(Obstacle):

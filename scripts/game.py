@@ -35,12 +35,12 @@ def draw(walls, all_objects, all_players, ball, middle_line):
     all_players.update()
 
 
-def generate_undestroyable_obstacles(obstacles, all_players, undestroyable_obstacles):
-    for _ in range(0, 3):
+def generate_undestroyable_obstacles(obstacles, all_players, undestroyable_obstacles):#czyli to sa przeszkody linie
+    for _ in range(0, 3):#3 times
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
         new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
-        collision_detection_group = pygame.sprite.Group()
+        collision_detection_group = pygame.sprite.Group()#tworzymy nowego soprite'a grupe
         collision_detection_group.add(obstacles, all_players, undestroyable_obstacles)
         while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
             x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
@@ -102,11 +102,11 @@ def main():
 
     all_players = pygame.sprite.Group()
     players_playing = pygame.sprite.Group()
-    walls = pygame.sprite.Group()
+    walls = pygame.sprite.Group()#grupa ktora sie interesuje# mozna usunac
     undestroyable_obstacles = pygame.sprite.Group()
     obstacles_player = pygame.sprite.Group()
     ball_obstacles = pygame.sprite.Group()
-    ball_sprite = pygame.sprite.Group()
+    ball_sprite = pygame.sprite.GroupSingle()
 
     ball = Ball(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
     ball_sprite.add(ball)
@@ -130,7 +130,7 @@ def main():
     up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0, BORDER_COLOR)
     down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER, BORDER_COLOR)
 
-    walls.add(team_left_line, team_right_line, up_line, down_line)
+    walls.add(team_left_line, team_right_line, up_line, down_line)#grupa sprite'ow walls, to grupa z ktora koliduje pilka
 
     stage = PREPARATION
 
@@ -174,15 +174,22 @@ def main():
             if team_left:
                 player_in_control = team_left[0]
                 player_in_control.move(obstacles_player, players_playing)
-                player_in_control.catch_ball(ball)
-
+                if player_in_control.catch_ball(ball_sprite.sprite):
+                    ball_sprite.sprite.set_caught_player(player_in_control)
+                #player_in_control.catch_ball(ball)
+#ruch pilki co sie dzieje w klatce
             ball.move()
-            ball.check_collision_wall()
+            ball.check_collision_wall()#tego nie powinno byc
             ball.check_collision_obstacle(ball_obstacles) 
+            if ball_sprite.sprite.caught_player:
+                ball_sprite.sprite.follow_caught_player()
+
             if ball.check_collision_player(players_playing):
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
             if not team_left or not team_right:
                 stage = ENDGAME
+
+
 
         elif stage == ENDGAME:
             if not team_left:
