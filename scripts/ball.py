@@ -19,7 +19,7 @@ class Ball(pygame.sprite.Sprite):
         self.vel = pygame.math.Vector2 #Vector2 == dx,dy - o ile sie porusza co klatke
         self.speed=3
         self.dvel = pygame.math.Vector2
-        self.danger=1
+        self.danger=True
         self.caught_by_player=None
 
     def def_vel(self,x_vel,y_vel):
@@ -54,19 +54,11 @@ class Ball(pygame.sprite.Sprite):
             if self.caught_by_player is None and self.danger == 0:#kolizja jest bezpieczna
                 self.caught_by_player=player
                 player.bench=False
-                return player,True
             else:
                 self.caught_by_player=None
                 player.bench=True
                 
-        return None,False
-    """ def check_collision_player(self, players_playing):
-        collision = pygame.sprite.spritecollide(self, players_playing, False)
-        if collision:
-            player = collision[0]
-            # self.vel.xy = (0, 0)
-            player.bench = True
-        return collision"""
+        return collision
 
     def move(self):
         if self.caught_by_player:
@@ -76,8 +68,8 @@ class Ball(pygame.sprite.Sprite):
             self.rect.center += self.vel
             self.speed =pygame.math.Vector2.length(self.vel)
             if self.speed<3:
-                self.danger=0
+                self.danger=False
             else:
-                self.danger=1
+                self.danger=True
     
                
