@@ -28,7 +28,6 @@ class Ball(pygame.sprite.Sprite):
 
     def maintain_collision_obstacle(self, obstacles):
         collision = pygame.sprite.spritecollide(self, obstacles, False)
-        
         for obstacle in collision:
             if (self.rect.bottom <= obstacle.rect.bottom + self.DIAMETER and
                     self.rect.top >= obstacle.rect.top - self.DIAMETER):
@@ -46,12 +45,14 @@ class Ball(pygame.sprite.Sprite):
                     self.rect.y -= self.dvel.y
                 self.vel.y *= -1
                 self.vel.x *= -1
-
+    
     def check_collision_player(self, players_playing):
-        collision = pygame.sprite.spritecollide(self, players_playing, False)
-        if collision:#mamy sytuacje kolizji
+        collision=None
+        if self.caught_by_player==None:
+            collision = pygame.sprite.spritecollide(self, players_playing, False)
+        if collision:
             player = collision[0]
-            if self.caught_by_player is None and self.danger == 0:#kolizja jest bezpieczna
+            if self.danger == False:
                 self.caught_by_player=player
                 player.bench=False
             else:
