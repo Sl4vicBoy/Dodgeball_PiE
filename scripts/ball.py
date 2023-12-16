@@ -38,7 +38,7 @@ class Ball(pygame.sprite.Sprite):
             player.bench = True
         return collision
 
-    def check_collision_obstacle(self, obstacles):
+    def check_collision_obstacle(self, obstacles, screen):
         collision = pygame.sprite.spritecollide(self, obstacles, False)
         
         if collision:
@@ -63,3 +63,6 @@ class Ball(pygame.sprite.Sprite):
                 elif self.rect.y <= obstacle.rect.centery:
                     self.rect.y -= self.dvel.y
                     self.vel.y *= -1
+            if obstacle.destroyable:
+                obstacle.update_hp(screen,obstacle.current_health - 1)
+                
