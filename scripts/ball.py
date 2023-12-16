@@ -6,7 +6,7 @@ from player import Player
 
 class Ball(pygame.sprite.Sprite):
     DIAMETER = 20
-    DECELERATION=1
+    DECELERATION=0.995
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -22,7 +22,7 @@ class Ball(pygame.sprite.Sprite):
         self.danger=1
         self.caught_by_player=None
 
-    def def_rand_vel(self,x_vel,y_vel):
+    def def_vel(self,x_vel,y_vel):
         self.vel = pygame.math.Vector2(x_vel, y_vel)
         self.dvel = pygame.math.Vector2(self.vel.x / (FPS ** 2), self.vel.y / (FPS ** 2))
 
@@ -49,13 +49,24 @@ class Ball(pygame.sprite.Sprite):
 
     def check_collision_player(self, players_playing):
         collision = pygame.sprite.spritecollide(self, players_playing, False)
+        if collision:#mamy sytuacje kolizji
+            player = collision[0]
+            if self.caught_by_player is None and self.danger == 0:#kolizja jest bezpieczna
+                self.caught_by_player=player
+                player.bench=False
+                return player,True
+            else:
+                self.caught_by_player=None
+                player.bench=True
+                
+        return None,False
+    """ def check_collision_player(self, players_playing):
+        collision = pygame.sprite.spritecollide(self, players_playing, False)
         if collision:
             player = collision[0]
-            if player.catch_ball(self):
-                pass
-            else:
-                player.bench = True
-        return collision#return a list containing all players_playing colliding with self
+            # self.vel.xy = (0, 0)
+            player.bench = True
+        return collision"""
 
     def move(self):
         if self.caught_by_player:

@@ -51,7 +51,7 @@ def generate_undestroyable_obstacles(obstacles, all_players, undestroyable_obsta
 
 def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
     for player in players_playing:
-        if player.bench:
+        if player.bench:#jezeli istnieje
             players_playing.remove(player)
             if player.team == RIGHT:
                 player.image = player.player_images[1]
@@ -164,8 +164,7 @@ def main():
             ball_obstacles.add(undestroyable_obstacles,walls)
 
             ball.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-            #ball.def_rand_vel(uniform(4,7),uniform(4,7))
-            ball.def_rand_vel(3,3)
+            ball.def_vel(7,7)
 
             stage = GAME
 
@@ -175,23 +174,24 @@ def main():
             if team_left:
                 player_in_control = team_left[0]
                 player_in_control.move(obstacles_player, players_playing)
-                #playerzy sie poruszaja i uwazaja na przeszkody
-                if player_in_control.catch_ball(ball_sprite.sprite):#if player catches a ball, player set in ball attributes
-                    ball_sprite.sprite.set_caught_player(player_in_control)
-                else:    
-                    if not players_playing.has(player_in_control):
-                        team_left.remove(player_in_control)
-                        bench_left.append(player_in_control)
-            
+                #player_in_control.catch_ball(ball)#lapie pilke
+
+            ball.move()
             ball.maintain_collision_obstacle(ball_obstacles) 
-            if ball.check_collision_player(players_playing):#gdy pilka ma kolizje z player'em to powinny byc warunki czy, pilka dla pilki to przeszkoda
-                #czy zostaje
-                check_benched(players_playing, bench_left, bench_right, team_left, team_right)
-            if not team_left or not team_right:#jezeli juz nie ma zadnego z ktoregos zespolu
+            caught_player,ball_caught = ball.check_collision_player(players_playing)
+            if ball_caught:
+                ball.caught_by_player = caught_player
+            else:
+                check_benched(players_playing, bench_left, bench_right, team_left, team_right)   
+                
+            if not team_left or not team_right:
+                stage = ENDGAME  
 
-                stage = ENDGAME
-
-            ball.move()    
+           #if ball.check_collision_player(players_playing):#jezeli nie dostajemy kolizji
+            #    check_benched(players_playing, bench_left, bench_right, team_left, team_right)
+            #if not team_left or not team_right:
+             #   stage = ENDGAME
+                
 
 
 
