@@ -29,35 +29,36 @@ def draw(walls, all_objects, all_players, ball, middle_line):
 
     middle_line.draw(SCREEN)
     walls.draw(SCREEN)
-    all_objects.draw(SCREEN)
+    for object in all_objects: #iteracyjnie, żeby sie wywoływały odpowiednie draw functions, nie zmieniac!!
+        object.draw(SCREEN)
     all_players.draw(SCREEN)
     ball.draw(SCREEN)
     all_players.update()
 
 
 def generate_obstacles(obstacles, all_players, map_obstacles):
+    collision_detection_group = pygame.sprite.Group()
+    collision_detection_group.add(obstacles, all_players, map_obstacles)
     for _ in range(0, 1):
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
         new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
-        collision_detection_group = pygame.sprite.Group()
-        collision_detection_group.add(obstacles, all_players, map_obstacles)
         while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
             x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
             y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
             new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
         map_obstacles.add(new_obstacle)
-    for _ in range(0,2):
+        collision_detection_group.add(new_obstacle)
+    for _ in range(0,3):
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
         new_obstacle = DestroyableObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
-        collision_detection_group = pygame.sprite.Group()
-        collision_detection_group.add(obstacles, all_players, map_obstacles)
         while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
             x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
             y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
             new_obstacle = DestroyableObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
         map_obstacles.add(new_obstacle)
+        collision_detection_group.add(new_obstacle)
 
 
 def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
@@ -189,7 +190,7 @@ def main():
 
             ball.move()
             ball.check_collision_wall()
-            ball.check_collision_obstacle(ball_obstacles) 
+            ball.check_collision_obstacle(ball_obstacles, SCREEN) 
             if ball.check_collision_player(players_playing):
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
             if not team_left or not team_right:
