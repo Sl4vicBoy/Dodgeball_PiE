@@ -102,7 +102,7 @@ def main():
 
     all_players = pygame.sprite.Group()
     players_playing = pygame.sprite.Group()
-    walls = pygame.sprite.Group()#grupa ktora sie interesuje# mozna usunac
+    walls = pygame.sprite.Group()
     undestroyable_obstacles = pygame.sprite.Group()
     obstacles_player = pygame.sprite.Group()
     ball_obstacles = pygame.sprite.Group()
@@ -130,7 +130,7 @@ def main():
     up_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, 0, BORDER_COLOR)
     down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER, BORDER_COLOR)
 
-    walls.add(team_left_line, team_right_line, up_line, down_line)#grupa sprite'ow walls, to grupa z ktora koliduje pilka
+    walls.add(team_left_line, team_right_line, up_line, down_line)
 
     stage = PREPARATION
 
@@ -161,10 +161,11 @@ def main():
             obstacles_player.add(walls, middle_line)
             generate_undestroyable_obstacles(obstacles_player, all_players, undestroyable_obstacles)
             obstacles_player.add(undestroyable_obstacles)
-            ball_obstacles.add(undestroyable_obstacles)
+            ball_obstacles.add(undestroyable_obstacles,walls)
 
             ball.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-            ball.def_rand_vel(uniform(4,7),uniform(4,7))
+            #ball.def_rand_vel(uniform(4,7),uniform(4,7))
+            ball.def_rand_vel(3,3)
 
             stage = GAME
 
@@ -181,10 +182,8 @@ def main():
                     if not players_playing.has(player_in_control):
                         team_left.remove(player_in_control)
                         bench_left.append(player_in_control)
-                
-            ball.check_collision_wall()#tego nie powinno byc
-            ball.check_collision_obstacle(ball_obstacles) 
             
+            ball.maintain_collision_obstacle(ball_obstacles) 
             if ball.check_collision_player(players_playing):#gdy pilka ma kolizje z player'em to powinny byc warunki czy, pilka dla pilki to przeszkoda
                 #czy zostaje
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)

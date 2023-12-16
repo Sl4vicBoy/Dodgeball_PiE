@@ -6,7 +6,7 @@ from player import Player
 
 class Ball(pygame.sprite.Sprite):
     DIAMETER = 20
-    DECELERATION=0.992
+    DECELERATION=1
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -25,68 +25,48 @@ class Ball(pygame.sprite.Sprite):
     def def_rand_vel(self,x_vel,y_vel):
         self.vel = pygame.math.Vector2(x_vel, y_vel)
         self.dvel = pygame.math.Vector2(self.vel.x / (FPS ** 2), self.vel.y / (FPS ** 2))
-        
 
-    def move(self):
-        self.vel*=self.DECELERATION
-        self.rect.center += self.vel
-        self.speed =pygame.math.Vector2.length(self.vel)
-        if self.speed<3:
-            self.danger=0
-        else:
-            self.danger=1    
-
-    def check_collision_wall(self):
-        if self.rect.bottom >= SCREEN_HEIGHT or self.rect.top <= 0:
-            self.vel.y *= -1
-        if self.rect.right >= SCREEN_WIDTH or self.rect.left <= 0:
-            self.vel.x *= -1
-
-    def check_collision_obstacle(self, obstacles):
+    def maintain_collision_obstacle(self, obstacles):
         collision = pygame.sprite.spritecollide(self, obstacles, False)
         
-        if collision:
-            obstacle = collision[0]
-            # Check left and right sides of the obstacle
+        for obstacle in collision:
             if (self.rect.bottom <= obstacle.rect.bottom + self.DIAMETER and
                     self.rect.top >= obstacle.rect.top - self.DIAMETER):
-
-                if self.rect.right <= obstacle.rect.left:
-                    self.rect.center -= (2 * self.dvel.x, 0)
+                    if self.rect.right <= obstacle.rect.left:
+                        self.rect.center -= (2 * self.dvel.x, 0)
+                        self.vel.x *= -1
+                    elif self.rect.left >= obstacle.rect.right:
+                        self.rect.x += 2 * self.dvel.x
+                        self.vel.x *= -1
                     self.vel.x *= -1
-                elif self.rect.left >= obstacle.rect.right:
-                    self.rect.x += 2 * self.dvel.x
-                    self.vel.x *= -1
-                self.vel.x *= -1
-
-            if self.rect.x in range(obstacle.rect.left, obstacle.rect.right + 1):
-                # Check top and bottom sides of the obstacle
+            if self.rect.x in range(obstacle.rect.left-1, obstacle.rect.right + 1):
                 if self.rect.y >= obstacle.rect.centery:
                     self.rect.y += self.dvel.y
-                    self.vel.y *= -1
                 elif self.rect.y <= obstacle.rect.centery:
                     self.rect.y -= self.dvel.y
-                    self.vel.y *= -1
+                self.vel.y *= -1
+                self.vel.x *= -1
 
     def check_collision_player(self, players_playing):
         collision = pygame.sprite.spritecollide(self, players_playing, False)
-        #return a list containing all players_playing colliding with self
         if collision:
             player = collision[0]
             if player.catch_ball(self):
                 pass
             else:
                 player.bench = True
-        return collision
+        return collision#return a list containing all players_playing colliding with self
 
-    def follow_caught_by_player(self):
+    def move(self):
         if self.caught_by_player:
-            self.rect.center = self.caught_by_player.rect.center
-
-    def move(self):#w ktory z dwoch sposobow pilka sie porusza, czy podaza za graczem czy normalnie sie odbija
-        if not self.caught_by_player:
+            self.rect.center = self.caught_by_player.rect.center#follow the players that caught you
+        else:    
             self.vel*=self.DECELERATION
-            self.rect.center += self.vel  
-        else:
-            self.follow_caught_by_player()
+            self.rect.center += self.vel
+            self.speed =pygame.math.Vector2.length(self.vel)
+            if self.speed<3:
+                self.danger=0
+            else:
+                self.danger=1
+    
                
