@@ -1,5 +1,5 @@
 import pygame
-from random import randint, seed
+from random import randint, seed,uniform
 from player import Player
 from obstacle import Obstacle, Midline
 from ball import Ball
@@ -164,7 +164,7 @@ def main():
             ball_obstacles.add(undestroyable_obstacles)
 
             ball.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-            ball.def_rand_vel()
+            ball.def_rand_vel(uniform(4,7),uniform(4,7))
 
             stage = GAME
 
@@ -174,20 +174,25 @@ def main():
             if team_left:
                 player_in_control = team_left[0]
                 player_in_control.move(obstacles_player, players_playing)
-                if player_in_control.catch_ball(ball_sprite.sprite):
+                #playerzy sie poruszaja i uwazaja na przeszkody
+                if player_in_control.catch_ball(ball_sprite.sprite):#if player catches a ball, player set in ball attributes
                     ball_sprite.sprite.set_caught_player(player_in_control)
-                #player_in_control.catch_ball(ball)
-#ruch pilki co sie dzieje w klatce
-            ball.move()
+                else:    
+                    if not players_playing.has(player_in_control):
+                        team_left.remove(player_in_control)
+                        bench_left.append(player_in_control)
+                
             ball.check_collision_wall()#tego nie powinno byc
             ball.check_collision_obstacle(ball_obstacles) 
-            if ball_sprite.sprite.caught_player:
-                ball_sprite.sprite.follow_caught_player()
-
-            if ball.check_collision_player(players_playing):
+            
+            if ball.check_collision_player(players_playing):#gdy pilka ma kolizje z player'em to powinny byc warunki czy, pilka dla pilki to przeszkoda
+                #czy zostaje
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
-            if not team_left or not team_right:
+            if not team_left or not team_right:#jezeli juz nie ma zadnego z ktoregos zespolu
+
                 stage = ENDGAME
+
+            ball.move()    
 
 
 

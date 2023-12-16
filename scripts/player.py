@@ -102,14 +102,14 @@ class Player(pygame.sprite.Sprite):
             self.rect.x, self.rect.y = current_x, current_y
 
     def catch_ball(self, ball):
-        #key = pygame.key.get_pressed()
         x = self.rect.centerx
         y = self.rect.centery
         ball_player_distance = sqrt((x - ball.rect.centerx)**2+(y-ball.rect.centery)**2)
 
-        if  ball.caught_player is None and ball_player_distance <= 50:#key[pygame.K_SPACE] and
-            ball.set_caught_player(self)
-            return True
+        if  ball.caught_by_player is None and ball_player_distance <= 50 and ball.danger == 0 and ball.speed<3:
+            ball.caught_by_player=self#wkladamy gracza do listy graczy trzymajacych pilke
+            self.bench=False
+            return True#zwraca prawde jezeli mozliwosc zlapania
         else:
-            #ball.set_caught_player(None)
+            ball.caught_by_player=None
             return False
