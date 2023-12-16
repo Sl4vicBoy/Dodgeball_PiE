@@ -190,7 +190,7 @@ def main():
 
             ball.move()
             ball.check_collision_wall()
-            ball.check_collision_obstacle(ball_obstacles, SCREEN) 
+            ball.check_collision_obstacle(ball_obstacles) 
             if ball.check_collision_player(players_playing):
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
             if not team_left or not team_right:
