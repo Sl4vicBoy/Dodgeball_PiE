@@ -32,18 +32,7 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center=(x, y))
 
-    '''def __check_collision_player__(self, team):
-        collision = False
-        for player in team:
-            if pygame.sprite.collide_mask(self, player) and player != self:
-                collision = True
-        return collision'''
-
     def __rotate__(self, keys):
-        '''prev_rect = self.rect
-        prev_img = self.image
-        prev_direction = self.direction'''
-
         if keys[pygame.K_a] and self.direction != "left":
             self.direction = "left"
             self.image = self.player_images[1]
@@ -120,4 +109,3 @@ class Player(pygame.sprite.Sprite):
             ball.vel = pygame.math.Vector2(0, 0)
             return 0
         return 1
-
