@@ -10,6 +10,8 @@ pygame.init()
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + SCOREBOARD))
 pygame.display.set_caption('Dodge-ball')
+Player.load_player_images()
+
 FPS = 60
 
 MENU = 0
@@ -29,8 +31,8 @@ def draw(walls, all_objects, all_players, ball, middle_line):
 
     middle_line.draw(SCREEN)
     walls.draw(SCREEN)
-    for object in all_objects: #iteracyjnie, żeby sie wywoływały odpowiednie draw functions, nie zmieniac!!
-        object.draw(SCREEN)
+    for obj in all_objects:  # iteracyjnie, żeby sie wywoływały odpowiednie draw functions, nie zmieniac!!
+        obj.draw(SCREEN)
     all_players.draw(SCREEN)
     ball.draw(SCREEN)
     all_players.update()
@@ -50,7 +52,7 @@ def generate_undestroyable_obstacles(obstacles, all_players, undestroyable_obsta
             new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
         map_obstacles.add(new_obstacle)
         collision_detection_group.add(new_obstacle)
-    for _ in range(0,3):
+    for _ in range(0, 3):
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
         new_obstacle = DestroyableObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
@@ -67,19 +69,21 @@ def check_benched(players_playing, bench_left, bench_right, team_left, team_righ
         if player.bench:#jezeli istnieje
             players_playing.remove(player)
             if player.team == RIGHT:
-                player.image = player.player_images[1]
+                player.image = Player.player_images[1]
                 player.rect = player.image.get_rect()
                 team_right.remove(player)
                 bench_right.append(player)
             if player.team == LEFT:
-                player.image = player.player_images[0]
+                player.image = Player.player_images[0]
                 player.rect = player.image.get_rect()
                 team_left.remove(player)
                 bench_left.append(player)
+
+    width = Player.player_img_left_direction.get_width()
     for count, player in enumerate(bench_left):
-        player.rect.center = (SCOREBOARD / 2 * (count * 2 + 1), SCREEN_HEIGHT + SCOREBOARD/2)
+        player.rect.center = (SCOREBOARD / 2 + width*count, SCREEN_HEIGHT + SCOREBOARD / 2)
     for count, player in enumerate(bench_right):
-        player.rect.center = (SCREEN_WIDTH - (SCOREBOARD / 2 * (count * 2 + 1)), SCREEN_HEIGHT + SCOREBOARD/2)
+        player.rect.center = (SCREEN_WIDTH - (SCOREBOARD / 2 + width*count), SCREEN_HEIGHT + SCOREBOARD / 2)
 
 
 def endgame(winner):
@@ -121,7 +125,7 @@ def main():
     ball_obstacles = pygame.sprite.Group()
     ball_sprite = pygame.sprite.GroupSingle()
 
-    ball = Ball(SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+    ball = Ball(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
     ball_sprite.add(ball)
 
     players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
@@ -194,7 +198,6 @@ def main():
             ball.move()
             ball.maintain_collision_obstacle(ball_obstacles) 
          
-
             if ball.check_collision_player(players_playing):
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
             if not team_left or not team_right:

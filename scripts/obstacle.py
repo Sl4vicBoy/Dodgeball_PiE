@@ -17,17 +17,17 @@ class Obstacle(pygame.sprite.Sprite):
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
-        
 
-class Midline(Obstacle):  
+
+class Midline(Obstacle):
     def __init__(self, width, height, x, y, color='violet'):
         super().__init__(width, height, x, y, color)
         self.collision_ball = False
         
 
 class DestroyableObstacle(Obstacle):
-    def __init__(self, width, height, x, y, color='blue', destroyable  = 1):
-        super().__init__(width, height, x, y, color, destroyable) 
+    def __init__(self, width, height, x, y, color='blue', destroyable=1):
+        super().__init__(width, height, x, y, color, destroyable)
         self.max_health = 4
         self.current_health = 4
         self.hp_bar = HPBAR(4, self.rect)
@@ -37,15 +37,16 @@ class DestroyableObstacle(Obstacle):
         super().draw(screen)
         self.hp_bar.draw(screen)
 
-    def update_hp(self,new_health):
+    def update_hp(self, new_health):
         self.current_health = new_health
-        if(self.current_health > 0):
+        if self.current_health > 0:
             self.hp_bar.update(self.current_health)
         else:
             self.rect.x = -1000
             self.rect.y = -1000
             self.hp_bar.rect.x = -1000
             self.hp_bar.rect.y = -1000
+
 
 class HPBAR(pygame.sprite.Sprite):
     def __init__(self, max_health, obstacle_rect, color='blue', height=5):
@@ -63,11 +64,9 @@ class HPBAR(pygame.sprite.Sprite):
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
 
-
-    def update(self,new_health):
+    def update(self, new_health):
         self.current_health = new_health
         self.health_fraction = self.current_health / self.max_health
         self.width = self.rect.width * self.health_fraction
         self.rect.width = self.width
         self.color = HP_COLORS[new_health]
-        

@@ -6,48 +6,55 @@ from math import sqrt
 class Player(pygame.sprite.Sprite):
     VEL = 4
 
+    player_img_left_direction = None
+    player_img_right_direction = None
+    player_img_up_direction = None
+    player_img_down_direction = None
+    player_images = None
+
+    @staticmethod
+    def load_player_images():
+        player_img = pygame.image.load(os.path.join('Assets', 'players', 'superswinka.png')).convert_alpha()
+        player_img_scaled = pygame.transform.scale_by(player_img, 0.4)
+
+        Player.player_img_left_direction = pygame.transform.flip(player_img_scaled, True, False)
+        Player.player_img_right_direction = player_img_scaled
+        Player.player_img_up_direction = pygame.transform.rotate(player_img_scaled, 90)
+        Player.player_img_down_direction = pygame.transform.rotate(player_img_scaled, -90)
+
+        Player.player_images = (Player.player_img_right_direction, Player.player_img_left_direction,
+                                Player.player_img_up_direction, Player.player_img_down_direction)
+
     def __init__(self, team, x, y, bench=False):
         pygame.sprite.Sprite.__init__(self)
         self.team = int(team)
         self.bench = bench
 
-        player_img = pygame.image.load(os.path.join('scripts/Assets', 'players', 'superswinka.png')).convert_alpha()
-        player_img_scaled = pygame.transform.scale_by(player_img, 0.4)
-
-        player_img_left_direction = pygame.transform.flip(player_img_scaled, True, False)
-        player_img_right_direction = player_img_scaled
-        player_img_up_direction = pygame.transform.rotate(player_img_scaled, 90)
-        player_img_down_direction = pygame.transform.rotate(player_img_scaled, -90)
-        self.player_images = (player_img_right_direction, player_img_left_direction,
-                              player_img_up_direction, player_img_down_direction)
-
         if team:
-            self.color = 'Red'
             self.direction = "left"
-            self.image = player_img_left_direction
+            self.image = Player.player_img_left_direction
         else:
-            self.color = 'Blue'
             self.direction = "right"
-            self.image = player_img_right_direction
+            self.image = Player.player_img_right_direction
 
         self.rect = self.image.get_rect(center=(x, y))
 
     def __rotate__(self, keys):
         if keys[pygame.K_a] and self.direction != "left":
             self.direction = "left"
-            self.image = self.player_images[1]
+            self.image = Player.player_images[1]
             self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
         if keys[pygame.K_d] and self.direction != "right":
             self.direction = "right"
-            self.image = self.player_images[0]
+            self.image = Player.player_images[0]
             self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
         if keys[pygame.K_s] and self.direction != "down":
             self.direction = "down"
-            self.image = self.player_images[3]
+            self.image = Player.player_images[3]
             self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
         if keys[pygame.K_w] and self.direction != "up":
             self.direction = "up"
-            self.image = self.player_images[2]
+            self.image = Player.player_images[2]
             self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
 
     def move(self, obstacles, team):
@@ -98,12 +105,11 @@ class Player(pygame.sprite.Sprite):
             self.image = prev_img
             self.rect = prev_rect
 
-
     def catch_ball(self, ball):
         key = pygame.key.get_pressed()
         x = self.rect.centerx
         y = self.rect.centery
-        ball_player_distance = sqrt((x - ball.rect.centerx)**2+(y-ball.rect.centery)**2)
+        ball_player_distance = sqrt((x - ball.rect.centerx) ** 2 + (y - ball.rect.centery) ** 2)
 
         if key[pygame.K_SPACE] and (ball_player_distance <= 50):
             ball.vel = pygame.math.Vector2(0, 0)
