@@ -2,7 +2,7 @@ import pygame
 import os
 from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from random import uniform
-
+import os
 
 class Ball(pygame.sprite.Sprite):
     COLOR = 'Black'
@@ -10,6 +10,7 @@ class Ball(pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
+
         ball_img = pygame.image.load(os.path.join('scripts/Assets', 'balls', 'basket-ball.png')).convert_alpha()
         ball_img_scaled = pygame.transform.scale(ball_img, (self.DIAMETER, self.DIAMETER))
         self.image = ball_img_scaled
@@ -31,7 +32,7 @@ class Ball(pygame.sprite.Sprite):
             self.vel.x *= -1
 
     def check_collision_player(self, players_playing):
-        collision = pygame.sprite.spritecollide(self, players_playing, False)
+        collision = pygame.sprite.spritecollide(self, players_playing, False, pygame.sprite.collide_mask)
         if collision:
             player = collision[0]
             # self.vel.xy = (0, 0)
@@ -39,7 +40,7 @@ class Ball(pygame.sprite.Sprite):
         return collision
 
     def check_collision_obstacle(self, obstacles):
-        collision = pygame.sprite.spritecollide(self, obstacles, False)
+        collision = pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask)
         
         if collision:
             obstacle = collision[0]
