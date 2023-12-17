@@ -1,5 +1,6 @@
 import pygame
 import os
+from math import sqrt
 
 
 class Player(pygame.sprite.Sprite):
@@ -10,7 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.team = int(team)
         self.bench = bench
 
-        player_img = pygame.image.load(os.path.join('Assets/Players', 'superswinka.png')).convert_alpha()
+        player_img = pygame.image.load(os.path.join('scripts/Assets', 'players', 'superswinka.png')).convert_alpha()
         player_img_scaled = pygame.transform.scale_by(player_img, 0.4)
 
         player_img_left_direction = pygame.transform.flip(player_img_scaled, True, False)
@@ -59,10 +60,6 @@ class Player(pygame.sprite.Sprite):
             self.direction = "up"
             self.image = self.player_images[2]
             self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
-        '''if obstacle_collision or (player_collision and self != player_collision):
-            self.direction = prev_direction
-            self.image = prev_img
-            self.rect = prev_rect'''
 
     def move(self, obstacles, team):
         keys = pygame.key.get_pressed()
@@ -111,3 +108,16 @@ class Player(pygame.sprite.Sprite):
             self.direction = prev_direction
             self.image = prev_img
             self.rect = prev_rect
+
+
+    def catch_ball(self, ball):
+        key = pygame.key.get_pressed()
+        x = self.rect.centerx
+        y = self.rect.centery
+        ball_player_distance = sqrt((x - ball.rect.centerx)**2+(y-ball.rect.centery)**2)
+
+        if key[pygame.K_SPACE] and (ball_player_distance <= 50):
+            ball.vel = pygame.math.Vector2(0, 0)
+            return 0
+        return 1
+
