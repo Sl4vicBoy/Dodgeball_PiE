@@ -1,5 +1,5 @@
 import pygame
-from random import randint, seed
+from random import randint, seed,uniform
 from player import Player
 from obstacle import Obstacle, Midline, DestroyableObstacle
 from ball import Ball
@@ -37,14 +37,15 @@ def draw(walls, all_objects, all_players, ball, middle_line):
     ball.draw(SCREEN)
     all_players.update()
 
-
-def generate_obstacles(obstacles, all_players, map_obstacles):
-    collision_detection_group = pygame.sprite.Group()
-    collision_detection_group.add(obstacles, all_players, map_obstacles)
-    for _ in range(0, 1):
+    
+def generate_undestroyable_obstacles(obstacles, all_players, undestroyable_obstacles):#czyli to sa przeszkody linie
+    for _ in range(0, 3):#3 times
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
         new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
+        collision_detection_group = pygame.sprite.Group()#tworzymy nowego soprite'a grupe
+        collision_detection_group.add(obstacles, all_players, undestroyable_obstacles)
+
         while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
             x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
             y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
@@ -65,7 +66,7 @@ def generate_obstacles(obstacles, all_players, map_obstacles):
 
 def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
     for player in players_playing:
-        if player.bench:
+        if player.bench:#jezeli istnieje
             players_playing.remove(player)
             if player.team == RIGHT:
                 player.image = Player.player_images[1]
@@ -122,7 +123,7 @@ def main():
     map_obstacles = pygame.sprite.Group()
     obstacles_player = pygame.sprite.Group()
     ball_obstacles = pygame.sprite.Group()
-    ball_sprite = pygame.sprite.Group()
+    ball_sprite = pygame.sprite.GroupSingle()
 
     ball = Ball(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
     ball_sprite.add(ball)
@@ -175,12 +176,14 @@ def main():
             players_playing.add(all_players)
 
             obstacles_player.add(walls, middle_line)
-            generate_obstacles(obstacles_player, all_players, map_obstacles)
-            obstacles_player.add(map_obstacles)
-            ball_obstacles.add(map_obstacles)
+
+            generate_undestroyable_obstacles(obstacles_player, all_players, undestroyable_obstacles)
+            obstacles_player.add(undestroyable_obstacles)
+            ball_obstacles.add(undestroyable_obstacles,walls)
+
 
             ball.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-            ball.def_rand_vel()
+            ball.def_vel(5,2)
 
             stage = GAME
 
@@ -190,15 +193,17 @@ def main():
             if team_left:
                 player_in_control = team_left[0]
                 player_in_control.move(obstacles_player, players_playing)
-                player_in_control.catch_ball(ball)
+                #player_in_control.catch_ball(ball)#lapie pilke
 
             ball.move()
-            ball.check_collision_wall()
-            ball.check_collision_obstacle(ball_obstacles)
+            ball.maintain_collision_obstacle(ball_obstacles) 
+         
             if ball.check_collision_player(players_playing):
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
             if not team_left or not team_right:
-                stage = ENDGAME
+                stage = ENDGAME   
+
+
 
         elif stage == ENDGAME:
             if not team_left:

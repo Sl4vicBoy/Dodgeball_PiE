@@ -2,8 +2,8 @@ import pygame.draw
 from constant_values import BORDER_COLOR, HP_COLORS
 
 
-class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, width, height, x, y, color=BORDER_COLOR, destroyable=0):
+class Obstacle(pygame.sprite.Sprite):  
+    def __init__(self, width, height, x, y,  color=BORDER_COLOR, destroyable = 0):
         super().__init__()
         self.image = pygame.Surface((width, height))
         self.image.fill(color)
@@ -11,6 +11,7 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.color = color
+
         self.collision_ball = True
         self.destroyable = destroyable
 
@@ -22,7 +23,7 @@ class Midline(Obstacle):
     def __init__(self, width, height, x, y, color='violet'):
         super().__init__(width, height, x, y, color)
         self.collision_ball = False
-
+        
 
 class DestroyableObstacle(Obstacle):
     def __init__(self, width, height, x, y, color='blue', destroyable=1):
