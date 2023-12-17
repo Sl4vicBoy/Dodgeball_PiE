@@ -7,3 +7,4 @@ BORDER_COLOR = 'blueviolet'
 MAX_WIDTH_OBSTACLE = 50
 MAX_HEIGHT_OBSTACLE = 50
 FPS = 60
+HP_COLORS = ['black','red','orange','blueviolet']
