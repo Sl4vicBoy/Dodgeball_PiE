@@ -38,13 +38,13 @@ def draw(walls, all_objects, all_players, ball, middle_line):
     all_players.update()
 
     
-def generate_undestroyable_obstacles(obstacles, all_players, undestroyable_obstacles):#czyli to sa przeszkody linie
+def generate_obstacles(obstacles, all_players, map_obstacles):
     for _ in range(0, 3):#3 times
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
         new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
-        collision_detection_group = pygame.sprite.Group()#tworzymy nowego soprite'a grupe
-        collision_detection_group.add(obstacles, all_players, undestroyable_obstacles)
+        collision_detection_group = pygame.sprite.Group()
+        collision_detection_group.add(obstacles, all_players, map_obstacles)
 
         while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
             x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
@@ -177,9 +177,9 @@ def main():
 
             obstacles_player.add(walls, middle_line)
 
-            generate_undestroyable_obstacles(obstacles_player, all_players, undestroyable_obstacles)
-            obstacles_player.add(undestroyable_obstacles)
-            ball_obstacles.add(undestroyable_obstacles,walls)
+            generate_obstacles(obstacles_player, all_players, map_obstacles)
+            obstacles_player.add(map_obstacles)
+            ball_obstacles.add(map_obstacles,walls)
 
 
             ball.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
