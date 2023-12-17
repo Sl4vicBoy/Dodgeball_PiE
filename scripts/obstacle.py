@@ -3,7 +3,7 @@ from constant_values import BORDER_COLOR, HP_COLORS
 
 
 class Obstacle(pygame.sprite.Sprite):  
-    def __init__(self, width, height, x, y,  color=BORDER_COLOR, destroyable = 0):
+    def __init__(self, width, height, x, y,  color=BORDER_COLOR, destroyable=0):
         super().__init__()
         self.image = pygame.Surface((width, height))
         self.image.fill(color)
@@ -33,7 +33,6 @@ class DestroyableObstacle(Obstacle):
         self.hp_bar = HPBAR(4, self.rect)
 
     def draw(self, screen):
-
         super().draw(screen)
         self.hp_bar.draw(screen)
 
