@@ -1,5 +1,4 @@
 import pygame
-import os
 from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 from random import uniform
 import os
