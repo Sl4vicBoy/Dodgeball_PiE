@@ -1,10 +1,11 @@
 import pygame
-from random import randint, seed,uniform
+from random import randint, seed, uniform
 from player import Player
 from obstacle import Obstacle, Midline, DestroyableObstacle
 from ball import Ball
 from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
+from itertools import cycle
 
 pygame.init()
 
@@ -37,9 +38,9 @@ def draw(walls, all_objects, all_players, ball, middle_line):
     ball.draw(SCREEN)
     all_players.update()
 
-    
+
 def generate_obstacles(obstacles, all_players, map_obstacles):
-    for _ in range(0, 3):#3 times
+    for _ in range(0, 3):  # 3 times
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
         new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
@@ -66,24 +67,23 @@ def generate_obstacles(obstacles, all_players, map_obstacles):
 
 def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
     for player in players_playing:
-        if player.bench:#jezeli istnieje
+        if player.bench:  # jezeli istnieje
             players_playing.remove(player)
             if player.team == RIGHT:
                 player.image = Player.player_images[1]
-                player.rect = player.image.get_rect()
                 team_right.remove(player)
                 bench_right.append(player)
             if player.team == LEFT:
                 player.image = Player.player_images[0]
-                player.rect = player.image.get_rect()
                 team_left.remove(player)
                 bench_left.append(player)
+            player.rect = player.image.get_rect()
 
     width = Player.player_img_left_direction.get_width()
     for count, player in enumerate(bench_left):
-        player.rect.center = (SCOREBOARD / 2 + width*count, SCREEN_HEIGHT + SCOREBOARD / 2)
+        player.rect.center = (SCOREBOARD / 2 + width * count, SCREEN_HEIGHT + SCOREBOARD / 2)
     for count, player in enumerate(bench_right):
-        player.rect.center = (SCREEN_WIDTH - (SCOREBOARD / 2 + width*count), SCREEN_HEIGHT + SCOREBOARD / 2)
+        player.rect.center = (SCREEN_WIDTH - (SCOREBOARD / 2 + width * count), SCREEN_HEIGHT + SCOREBOARD / 2)
 
 
 def endgame(winner):
@@ -104,6 +104,22 @@ def endgame(winner):
     pygame.display.flip()
 
 
+def change_player(team, player_in_control, keys_pressed):
+    if player_in_control is not None:
+        if not keys_pressed[pygame.K_z]:
+            return player_in_control
+        else:
+            print("debug")
+            index = team.index(player_in_control)
+            if index + 1 >= len(team):
+                player = team[0]
+            else:
+                player = team[index+1]
+            return player
+    else:
+        return team[0]
+
+
 def main():
     running = True
     clock = pygame.time.Clock()
@@ -116,6 +132,7 @@ def main():
     team_right = []
     bench_left = []
     bench_right = []
+    chosen_team = team_left  # tu docelowo bedzie funkcja do wybierania ktora druzyna chcesz grac(#kiedyssieprzyda)
 
     all_players = pygame.sprite.Group()
     players_playing = pygame.sprite.Group()
@@ -149,6 +166,8 @@ def main():
 
     walls.add(team_left_line, team_right_line, up_line, down_line)
 
+    player_in_control = None
+
     stage = PREPARATION
 
     while running:
@@ -179,31 +198,28 @@ def main():
 
             generate_obstacles(obstacles_player, all_players, map_obstacles)
             obstacles_player.add(map_obstacles)
-            ball_obstacles.add(map_obstacles,walls)
+            ball_obstacles.add(map_obstacles, walls)
 
-
-            ball.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-            ball.def_vel(5,2)
+            ball.def_vel(5, 2)
 
             stage = GAME
 
         elif stage == GAME:
             draw(walls, obstacles_player, all_players, ball_sprite, middle_line)
 
-            if team_left:
-                player_in_control = team_left[0]
-                player_in_control.move(obstacles_player, players_playing)
-                #player_in_control.catch_ball(ball)#lapie pilke
+            keys_pressed = pygame.key.get_pressed()
+
+            player_in_control = change_player(chosen_team, player_in_control, keys_pressed)
+            player_in_control.move(obstacles_player, players_playing)
+            player_in_control.catch_ball(ball)
 
             ball.move()
-            ball.maintain_collision_obstacle(ball_obstacles) 
-         
+            ball.maintain_collision_obstacle(ball_obstacles)
+
             if ball.check_collision_player(players_playing):
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
             if not team_left or not team_right:
-                stage = ENDGAME   
-
-
+                stage = ENDGAME
 
         elif stage == ENDGAME:
             if not team_left:
