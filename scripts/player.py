@@ -111,15 +111,15 @@ class Player(pygame.sprite.Sprite):
 
         marker.move_marker()
 
-    def catch_ball(self, ball):
-        key = pygame.key.get_pressed()
+    def catch_ball(self, ball, events):
         x = self.rect.centerx
         y = self.rect.centery
         ball_player_distance = sqrt((x - ball.rect.centerx) ** 2 + (y - ball.rect.centery) ** 2)
 
-        if key[pygame.K_SPACE] and (ball_player_distance <= 50):
-            ball.danger = False
-            ball.vel = pygame.math.Vector2(0, 0)
-            ball.caught_by_player = self
-            return 0
+        for event in events:
+            if event.type == pygame.KEYUP and event.key == pygame.K_SPACE and (ball_player_distance <= 60):
+                ball.danger = False
+                ball.vel = pygame.math.Vector2(0, 0)
+                ball.caught_by_player = self
+                return 0
         return 1
