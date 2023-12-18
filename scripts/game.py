@@ -216,11 +216,9 @@ def main():
         elif stage == GAME:
             draw(walls, obstacles_player, all_players, ball_sprite, middle_line, marker_sprite)
 
-            keys_pressed = pygame.key.get_pressed()
-
             player_in_control = change_player(chosen_team, player_in_control, events, marker)
             player_in_control.move(obstacles_player, players_playing, marker)
-            player_in_control.catch_ball(ball)
+            player_in_control.catch_ball(ball, events)
 
             ball.move()
             ball.maintain_collision_obstacle(ball_obstacles)
