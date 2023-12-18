@@ -5,7 +5,7 @@ from obstacle import Obstacle, Midline, DestroyableObstacle
 from ball import Ball
 from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
-from itertools import cycle
+from marker import Marker
 
 pygame.init()
 
@@ -26,7 +26,7 @@ catch_left = 0
 catch_right = 0
 
 
-def draw(walls, all_objects, all_players, ball, middle_line):
+def draw(walls, all_objects, all_players, ball, middle_line, marker):
     # Draw background
     SCREEN.fill('Green')
 
@@ -35,6 +35,7 @@ def draw(walls, all_objects, all_players, ball, middle_line):
     for obj in all_objects:  # iteracyjnie, żeby sie wywoływały odpowiednie draw functions, nie zmieniac!!
         obj.draw(SCREEN)
     all_players.draw(SCREEN)
+    marker.draw(SCREEN)
     ball.draw(SCREEN)
     all_players.update()
 
@@ -104,18 +105,19 @@ def endgame(winner):
     pygame.display.flip()
 
 
-def change_player(team, player_in_control, keys_pressed):
+def change_player(team, player_in_control, events, marker):
     if player_in_control is not None:
-        if not keys_pressed[pygame.K_z]:
-            return player_in_control
-        else:
-            print("debug")
-            index = team.index(player_in_control)
-            if index + 1 >= len(team):
-                player = team[0]
-            else:
-                player = team[index+1]
-            return player
+        for event in events:
+            if event.type == pygame.KEYUP and event.key == pygame.K_z:
+                index = team.index(player_in_control)
+                if index + 1 >= len(team):
+                    player = team[0]
+                else:
+                    player = team[index+1]
+                marker.change_player(player)
+                return player
+
+        return player_in_control
     else:
         return team[0]
 
@@ -168,10 +170,14 @@ def main():
 
     player_in_control = None
 
+    marker_sprite = pygame.sprite.GroupSingle()
+    marker = None
+
     stage = PREPARATION
 
     while running:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
                 break
@@ -202,15 +208,18 @@ def main():
 
             ball.def_vel(5, 2)
 
+            marker = Marker(chosen_team[0])
+            marker_sprite.add(marker)
+
             stage = GAME
 
         elif stage == GAME:
-            draw(walls, obstacles_player, all_players, ball_sprite, middle_line)
+            draw(walls, obstacles_player, all_players, ball_sprite, middle_line, marker_sprite)
 
             keys_pressed = pygame.key.get_pressed()
 
-            player_in_control = change_player(chosen_team, player_in_control, keys_pressed)
-            player_in_control.move(obstacles_player, players_playing)
+            player_in_control = change_player(chosen_team, player_in_control, events, marker)
+            player_in_control.move(obstacles_player, players_playing, marker)
             player_in_control.catch_ball(ball)
 
             ball.move()
