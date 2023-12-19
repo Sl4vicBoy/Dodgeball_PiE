@@ -26,6 +26,7 @@ hit_right = 0
 catch_left = 0
 catch_right = 0
 
+
 def draw(walls, all_objects, all_players, ball, middle_line, marker):
    
     SCREEN.fill('Green')
@@ -147,10 +148,10 @@ def main():
     obstacles_player = pygame.sprite.Group()
     ball_obstacles = pygame.sprite.Group()
     ball_sprite = pygame.sprite.GroupSingle()
-    cue_sprite=pygame.sprite.GroupSingle()
+    cue_sprite = pygame.sprite.GroupSingle()
 
     ball = Ball(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-    cue=Cue(ball.rect.center)
+    cue = Cue(ball.rect.center)
     ball_sprite.add(ball)
     cue_sprite.add(cue)
     
@@ -235,11 +236,10 @@ def main():
             if not team_left or not team_right:
                 stage = ENDGAME
 
-            cue.update(SCREEN,ball)
-            if event.type==pygame.MOUSEBUTTONDOWN:
-                ball.throw_a_ball(cue)
-               
-                 
+            cue.update(SCREEN, ball)
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    ball.throw_a_ball(cue)
 
         elif stage == ENDGAME:
             if not team_left:
