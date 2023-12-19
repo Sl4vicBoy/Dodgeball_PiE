@@ -223,17 +223,19 @@ def main():
             player_in_control.move(obstacles_player, players_playing, marker)
             player_in_control.catch_ball(ball, events)
 
-            ball.move()
+            ball.move(cue)
             ball.maintain_collision_obstacle(ball_obstacles)
 
             if ball.check_collision_player(players_playing):
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
             if not team_left or not team_right:
                 stage = ENDGAME
-#edited here!!
+
             cue.update(SCREEN,ball)
             if event.type==pygame.MOUSEBUTTONDOWN:
-                ball.throw_a_ball(cue.angle)  
+                ball.throw_a_ball(cue)
+               
+                 
 
         elif stage == ENDGAME:
             if not team_left:
