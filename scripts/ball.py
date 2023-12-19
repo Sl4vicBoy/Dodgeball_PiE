@@ -59,8 +59,9 @@ class Ball(pygame.sprite.Sprite):
                 player.bench = True
         return collision
 
-    def move(self):
+    def move(self, cue):
         if self.caught_by_player:
+            cue.visible = True
             self.rect.center = self.caught_by_player.rect.center
         else:
             self.vel *= self.DECELERATION
@@ -79,6 +80,7 @@ class Ball(pygame.sprite.Sprite):
         if self.caught_by_player.team == RIGHT:
             self.danger = LEFT
         self.caught_by_player = None
+        cue.visible = False
 
 
 class Cue(pygame.sprite.Sprite):

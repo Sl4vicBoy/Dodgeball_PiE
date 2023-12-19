@@ -3,7 +3,7 @@ from random import randint, seed
 from player import Player
 from obstacle import Obstacle, Midline, DestroyableObstacle
 from ball import Ball, Cue
-from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
+from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, NONE,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
 from marker import Marker
 
@@ -108,22 +108,22 @@ def endgame(winner):
 
 def change_player(team, player_in_control, events, marker):
     if player_in_control is not None:
+        if player_in_control.team is not team[0].team:
+            player_in_control = team[0]
         if player_in_control.bench:
-            marker.change_player(team[0])
-            return team[0]
+            player_in_control = team[0]
         for event in events:
             if event.type == pygame.KEYUP and event.key == pygame.K_z:
                 index = team.index(player_in_control)
                 if index + 1 >= len(team):
-                    player = team[0]
+                    player_in_control = team[0]
                 else:
-                    player = team[index+1]
-                marker.change_player(player)
-                return player
-
-        return player_in_control
+                    player_in_control = team[index+1]
+        marker.change_player(player_in_control)
     else:
-        return team[0]
+        player_in_control = team[0]
+        marker.change_player(player_in_control)
+    return player_in_control
 
 
 def main():
@@ -138,7 +138,7 @@ def main():
     team_right = []
     bench_left = []
     bench_right = []
-    chosen_team = team_left  # tu docelowo bedzie funkcja do wybierania ktora druzyna chcesz grac(#kiedyssieprzyda)
+    chosen_team = NONE  # tu docelowo bedzie funkcja do wybierania ktora druzyna chcesz grac(#kiedyssieprzyda)
 
     all_players = pygame.sprite.Group()
     players_playing = pygame.sprite.Group()
@@ -212,15 +212,16 @@ def main():
             generate_obstacles(obstacles_player, all_players, map_obstacles)
             obstacles_player.add(map_obstacles)
             ball_obstacles.add(map_obstacles, walls)
-
+            ball.rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
             if team_with_ball == LEFT:
                 ball.def_vel(-4, 0)
                 ball.danger = RIGHT
+                marker = Marker(team_left[0])
             if team_with_ball == RIGHT:
                 ball.def_vel(4, 0)
                 ball.danger = LEFT
-
-            marker = Marker(chosen_team[0])
+                marker = Marker(team_right[0])
+            chosen_team = team_with_ball
             marker_sprite.add(marker)
 
             stage = GAME
@@ -228,11 +229,14 @@ def main():
         elif stage == GAME:
             draw(walls, obstacles_player, all_players, ball_sprite, middle_line, marker_sprite)
 
-            player_in_control = change_player(chosen_team, player_in_control, events, marker)
+            if chosen_team == LEFT:
+                player_in_control = change_player(team_left, player_in_control, events, marker)
+            if chosen_team == RIGHT:
+                player_in_control = change_player(team_right, player_in_control, events, marker)
             player_in_control.move(obstacles_player, players_playing, marker)
             player_in_control.catch_ball(ball, events)
 
-            ball.move()
+            ball.move(cue)
             ball.maintain_collision_obstacle(ball_obstacles)
 
             if ball.check_collision_player(players_playing):
@@ -244,6 +248,11 @@ def main():
             for event in events:
                 if event.type == pygame.MOUSEBUTTONDOWN and ball.caught_by_player:
                     ball.throw_a_ball(cue)
+                if event.type == pygame.KEYUP and event.key == pygame.K_p:
+                    if chosen_team == LEFT:
+                        chosen_team = RIGHT
+                    if chosen_team == RIGHT:
+                        chosen_team = LEFT
 
         elif stage == ENDGAME:
             if not team_left:

@@ -18,4 +18,5 @@ class Marker(pygame.sprite.Sprite):
 
     def change_player(self, player):
         self.player = player
+        self.color = player.color
         self.move_marker()
