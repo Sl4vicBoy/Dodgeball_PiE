@@ -209,7 +209,7 @@ def main():
             obstacles_player.add(map_obstacles)
             ball_obstacles.add(map_obstacles, walls)
 
-            ball.def_vel(5, 2)
+            ball.def_vel(6, 2)
 
             marker = Marker(chosen_team[0])
             marker_sprite.add(marker)
@@ -233,8 +233,7 @@ def main():
 #edited here!!
             cue.update(SCREEN,ball)
             if event.type==pygame.MOUSEBUTTONDOWN:
-                ball.throw_a_ball(cue.angle)
-                ball.caught_by_player=False   
+                ball.throw_a_ball(cue.angle)  
 
         elif stage == ENDGAME:
             if not team_left:

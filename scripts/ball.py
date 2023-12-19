@@ -75,12 +75,12 @@ class Ball(pygame.sprite.Sprite):
                 self.danger = True
 
     def throw_a_ball(self,angle):
-            new_x_vel = math.cos(math.radians(angle)) * self.speed
-            new_y_vel = math.sin(math.radians(angle)) * self.speed
+            throwing_x_vel = -math.cos(math.radians(angle))*5
+            throwing_y_vel = math.sin(math.radians(angle))*5
             #can be force*x_impulse, y_impulse depending on a player
-            self.def_vel(new_x_vel, new_y_vel)
+            self.def_vel(throwing_x_vel, throwing_y_vel)
             self.caught_by_player = None
-            self.danger = True           
+            self.danger = True          
 
 
 class Cue(pygame.sprite.Sprite):
