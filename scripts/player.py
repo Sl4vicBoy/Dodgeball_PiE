@@ -1,7 +1,7 @@
 import pygame
 import os
 from math import sqrt
-
+from marker import Marker
 
 class Player(pygame.sprite.Sprite):
     VEL = 4
@@ -11,6 +11,8 @@ class Player(pygame.sprite.Sprite):
     player_img_up_direction = None
     player_img_down_direction = None
     player_images = None
+
+    marker = None
 
     @staticmethod
     def load_player_images():
@@ -31,9 +33,11 @@ class Player(pygame.sprite.Sprite):
         self.bench = bench
 
         if team:
+            self.color = 'red'
             self.direction = "left"
             self.image = Player.player_img_left_direction
         else:
+            self.color = 'cyan'
             self.direction = "right"
             self.image = Player.player_img_right_direction
 
@@ -57,7 +61,7 @@ class Player(pygame.sprite.Sprite):
             self.image = Player.player_images[2]
             self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
 
-    def move(self, obstacles, team):
+    def move(self, obstacles, team, marker):
         keys = pygame.key.get_pressed()
 
         current_x = self.rect.x
@@ -105,15 +109,17 @@ class Player(pygame.sprite.Sprite):
             self.image = prev_img
             self.rect = prev_rect
 
-    def catch_ball(self, ball):
-        key = pygame.key.get_pressed()
+        marker.move_marker()
+
+    def catch_ball(self, ball, events):
         x = self.rect.centerx
         y = self.rect.centery
         ball_player_distance = sqrt((x - ball.rect.centerx) ** 2 + (y - ball.rect.centery) ** 2)
 
-        if key[pygame.K_SPACE] and (ball_player_distance <= 50):
-            ball.danger = False
-            ball.vel = pygame.math.Vector2(0, 0)
-            ball.caught_by_player = self
-            return 0
+        for event in events:
+            if event.type == pygame.KEYUP and event.key == pygame.K_SPACE and (ball_player_distance <= 60):
+                ball.danger = False
+                ball.vel = pygame.math.Vector2(0, 0)
+                ball.caught_by_player = self
+                return 0
         return 1
