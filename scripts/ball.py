@@ -1,9 +1,8 @@
 import pygame
 import os
-from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
-from random import uniform
+from constant_values import FPS
 from player import Player
-
+import math
 
 class Ball(pygame.sprite.Sprite):
     DIAMETER = 20
@@ -64,7 +63,8 @@ class Ball(pygame.sprite.Sprite):
 
     def move(self):
         if self.caught_by_player:
-            self.rect.center = self.caught_by_player.rect.center  # follow the players that caught you
+            self.rect.center = self.caught_by_player.rect.center
+            #teraz robimy warunek na wyrzut
         else:
             self.vel *= self.DECELERATION
             self.rect.center += self.vel
@@ -73,3 +73,30 @@ class Ball(pygame.sprite.Sprite):
                 self.danger = False
             else:
                 self.danger = True
+
+    def throw_a_ball(self,angle):
+            new_x_vel = math.cos(math.radians(angle)) * self.speed
+            new_y_vel = math.sin(math.radians(angle)) * self.speed
+            #can be force*x_impulse, y_impulse depending on a player
+            self.def_vel(new_x_vel, new_y_vel)
+            self.caught_by_player = None
+            self.danger = True           
+
+
+class Cue(pygame.sprite.Sprite):
+    def __init__(self, pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.cue_original_img=pygame.image.load(os.path.join('Assets', 'players', 'cue.png')).convert_alpha()
+        self.angle = 0
+        self.image = pygame.transform.rotate(self.cue_original_img,self.angle)
+        self.rect =self.image.get_rect(center=pos)
+
+    def update(self,surface,ball):
+        mouse_pos=pygame.mouse.get_pos()
+        self.rect.center = ball.rect.center
+        x_dist=ball.rect.center[0]-mouse_pos[0]
+        y_dist=ball.rect.center[1]-mouse_pos[1]
+        self.angle=-math.degrees(math.atan2(y_dist,x_dist))
+
+        self.image= pygame.transform.rotate(self.cue_original_img,self.angle)#we recreate our image according to the angle
+        surface.blit(self.image,(self.rect.centerx-self.image.get_width()/2,self.rect.centery-self.image.get_height()/2))

@@ -3,6 +3,7 @@ from random import randint, seed, uniform
 from player import Player
 from obstacle import Obstacle, Midline, DestroyableObstacle
 from ball import Ball
+from ball import Cue
 from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
 from itertools import cycle
@@ -25,14 +26,12 @@ hit_right = 0
 catch_left = 0
 catch_right = 0
 
-
 def draw(walls, all_objects, all_players, ball, middle_line):
-    # Draw background
     SCREEN.fill('Green')
 
     middle_line.draw(SCREEN)
     walls.draw(SCREEN)
-    for obj in all_objects:  # iteracyjnie, żeby sie wywoływały odpowiednie draw functions, nie zmieniac!!
+    for obj in all_objects:
         obj.draw(SCREEN)
     all_players.draw(SCREEN)
     ball.draw(SCREEN)
@@ -40,7 +39,7 @@ def draw(walls, all_objects, all_players, ball, middle_line):
 
 
 def generate_obstacles(obstacles, all_players, map_obstacles):
-    for _ in range(0, 3):  # 3 times
+    for _ in range(0, 3):
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
         new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
@@ -67,7 +66,7 @@ def generate_obstacles(obstacles, all_players, map_obstacles):
 
 def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
     for player in players_playing:
-        if player.bench:  # jezeli istnieje
+        if player.bench:
             players_playing.remove(player)
             if player.team == RIGHT:
                 player.image = Player.player_images[1]
@@ -141,10 +140,13 @@ def main():
     obstacles_player = pygame.sprite.Group()
     ball_obstacles = pygame.sprite.Group()
     ball_sprite = pygame.sprite.GroupSingle()
+    cue_sprite=pygame.sprite.GroupSingle()
 
     ball = Ball(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+    cue=Cue(ball.rect.center)
     ball_sprite.add(ball)
-
+    cue_sprite.add(cue)
+    
     players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
                                       (7 * SCREEN_WIDTH / 10, SCREEN_HEIGHT / 2),
                                       (3 * SCREEN_WIDTH / 4, 3 * SCREEN_HEIGHT / 4)]
@@ -220,6 +222,11 @@ def main():
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
             if not team_left or not team_right:
                 stage = ENDGAME
+#edited here!!
+            cue.update(SCREEN,ball)
+            if event.type==pygame.MOUSEBUTTONDOWN:
+                ball.throw_a_ball(cue.angle)
+                ball.caught_by_player=False   
 
         elif stage == ENDGAME:
             if not team_left:
