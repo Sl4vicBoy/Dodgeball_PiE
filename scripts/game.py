@@ -2,8 +2,7 @@ import pygame
 from random import randint, seed
 from player import Player
 from obstacle import Obstacle, Midline, DestroyableObstacle
-from ball import Ball
-from ball import Cue
+from ball import Ball, Cue
 from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
 from marker import Marker
@@ -214,7 +213,12 @@ def main():
             obstacles_player.add(map_obstacles)
             ball_obstacles.add(map_obstacles, walls)
 
-            ball.def_vel(6, 2)
+            if team_with_ball == LEFT:
+                ball.def_vel(-4, 0)
+                ball.danger = RIGHT
+            if team_with_ball == RIGHT:
+                ball.def_vel(4, 0)
+                ball.danger = LEFT
 
             marker = Marker(chosen_team[0])
             marker_sprite.add(marker)
@@ -228,7 +232,7 @@ def main():
             player_in_control.move(obstacles_player, players_playing, marker)
             player_in_control.catch_ball(ball, events)
 
-            ball.move(cue)
+            ball.move()
             ball.maintain_collision_obstacle(ball_obstacles)
 
             if ball.check_collision_player(players_playing):
@@ -238,7 +242,7 @@ def main():
 
             cue.update(SCREEN, ball)
             for event in events:
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN and ball.caught_by_player:
                     ball.throw_a_ball(cue)
 
         elif stage == ENDGAME:
