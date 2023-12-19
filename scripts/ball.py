@@ -1,5 +1,6 @@
 import pygame
 import os
+import math
 from constant_values import FPS
 
 
@@ -16,7 +17,7 @@ class Ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(x, y))
         self.mask = pygame.mask.from_surface(self.image)
         self.mask_image = self.mask.to_surface()
-        self.vel = pygame.math.Vector2  # Vector2 == dx,dy - o ile sie porusza co klatke
+        self.vel = pygame.math.Vector2
         self.speed = 3
         self.dvel = pygame.math.Vector2
         self.danger = True
@@ -63,9 +64,10 @@ class Ball(pygame.sprite.Sprite):
                 player.bench = True
         return collision
 
-    def move(self):
+    def move(self, cue):
         if self.caught_by_player:
-            self.rect.center = self.caught_by_player.rect.center  # follow the players that caught you
+            cue.visible = True
+            self.rect.center = self.caught_by_player.rect.center
         else:
             # self.vel *= self.DECELERATION
             self.rect.center += self.vel
@@ -74,3 +76,34 @@ class Ball(pygame.sprite.Sprite):
                 self.danger = False
             else:
                 self.danger = True
+
+    def throw_a_ball(self, cue):
+        throwing_x_vel = -math.cos(math.radians(cue.angle)) * 5
+        throwing_y_vel = math.sin(math.radians(cue.angle)) * 5
+        # can be force*x_impulse, y_impulse depending on a player
+        self.def_vel(throwing_x_vel, throwing_y_vel)
+        self.caught_by_player = None
+        self.danger = True
+        cue.visible = False
+
+
+class Cue(pygame.sprite.Sprite):
+    def __init__(self, pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.cue_original_img = pygame.image.load(os.path.join('Assets', 'players', 'cue.png')).convert_alpha()
+        self.angle = 0
+        self.image = pygame.transform.rotate(self.cue_original_img, self.angle)
+        self.rect = self.image.get_rect(center=pos)
+        self.visible = False
+
+    def update(self, surface, ball):
+        mouse_pos = pygame.mouse.get_pos()
+        self.rect.center = ball.rect.center
+        if self.visible:
+            x_dist = ball.rect.center[0] - mouse_pos[0]
+            y_dist = ball.rect.center[1] - mouse_pos[1]
+            self.angle = -math.degrees(math.atan2(y_dist, x_dist))
+
+            self.image = pygame.transform.rotate(self.cue_original_img, self.angle)
+            surface.blit(self.image, (self.rect.centerx - self.image.get_width() / 2,
+                                      self.rect.centery - self.image.get_height() / 2))
