@@ -1,7 +1,7 @@
 import pygame
 import os
 import math
-from constant_values import FPS, LEFT, RIGHT
+from constant_values import FPS, LEFT, RIGHT, NONE
 
 
 class Ball(pygame.sprite.Sprite):
@@ -18,10 +18,8 @@ class Ball(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.mask_image = self.mask.to_surface()
         self.vel = pygame.math.Vector2
-        self.speed = 3
         self.dvel = pygame.math.Vector2
-        self.danger_right = True
-        self.danger_left = True
+        self.danger = NONE
         self.caught_by_player = None
 
     def def_vel(self, x_vel, y_vel):
@@ -57,11 +55,7 @@ class Ball(pygame.sprite.Sprite):
             collision = pygame.sprite.spritecollide(self, players_playing, False, pygame.sprite.collide_mask)
         if collision:
             player = collision[0]
-            if (not self.danger_right and player.team == RIGHT) or (not self.danger_left and player.team == LEFT):
-                self.caught_by_player = player
-                player.bench = False
-            else:
-                self.caught_by_player = None
+            if self.danger == player.team:
                 player.bench = True
         return collision
 
@@ -73,28 +67,22 @@ class Ball(pygame.sprite.Sprite):
             self.rect.centery = self.caught_by_player.rect.centery
             self.rect.centerx = self.caught_by_player.rect.centerx + player_width/2 + ball_width
         else:
-            # self.vel *= self.DECELERATION
+            self.vel *= self.DECELERATION
             self.rect.center += self.vel
-            self.speed = pygame.math.Vector2.length(self.vel)
-            if self.speed < 2:
-                self.danger = False
-            else:
-                self.danger = True
+            speed = pygame.math.Vector2.length(self.vel)
+            if speed < 2:
+                self.danger = NONE
 
     def throw_a_ball(self, cue):
         throwing_x_vel = -math.cos(math.radians(cue.angle)) * 5
         throwing_y_vel = math.sin(math.radians(cue.angle)) * 5
         # can be force*x_impulse, y_impulse depending on a player
         self.def_vel(throwing_x_vel, throwing_y_vel)
-
-        if self.caught_by_player.team == 0:
-            self.danger_left = False
-            self.danger_right = True
-        else:
-            self.danger_right = False
-            self.danger_left = True
+        if self.caught_by_player.team == LEFT:
+            self.danger = RIGHT
+        if self.caught_by_player.team == RIGHT:
+            self.danger = LEFT
         self.caught_by_player = None
-
         cue.visible = False
 
 

@@ -2,9 +2,8 @@ import pygame
 from random import randint, seed
 from player import Player
 from obstacle import Obstacle, Midline, DestroyableObstacle
-from ball import Ball
-from ball import Cue
-from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
+from ball import Ball, Cue
+from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, NONE,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
 from marker import Marker
 
@@ -107,24 +106,31 @@ def endgame(winner):
     pygame.display.flip()
 
 
+def score(games_won_left, games_won_right):
+    font = pygame.font.Font("freesansbold.ttf", 20)
+    left_score = font.render("L:" + str(games_won_left), False, (255, 255, 255))
+    right_score = font.render(str(games_won_right) + ':R', False, (255, 255, 255))
+    left_score_rect = left_score.get_rect(center=(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT + SCOREBOARD/2))
+    right_score_rect = right_score.get_rect(center=(SCREEN_WIDTH / 2 + 25, SCREEN_HEIGHT + SCOREBOARD/2))
+    SCREEN.blit(left_score, left_score_rect)
+    SCREEN.blit(right_score, right_score_rect)
+
+
 def change_player(team, player_in_control, events, marker):
     if player_in_control is not None:
-        if player_in_control.bench:
-            marker.change_player(team[0])
-            return team[0]
+        if player_in_control.team is not team[0].team or player_in_control.bench:
+            player_in_control = team[0]
         for event in events:
             if event.type == pygame.KEYUP and event.key == pygame.K_z:
                 index = team.index(player_in_control)
                 if index + 1 >= len(team):
-                    player = team[0]
+                    player_in_control = team[0]
                 else:
-                    player = team[index+1]
-                marker.change_player(player)
-                return player
-
-        return player_in_control
+                    player_in_control = team[index+1]
     else:
-        return team[0]
+        player_in_control = team[0]
+    marker.change_player(player_in_control)
+    return player_in_control
 
 
 def main():
@@ -139,7 +145,7 @@ def main():
     team_right = []
     bench_left = []
     bench_right = []
-    chosen_team = team_left  # tu docelowo bedzie funkcja do wybierania ktora druzyna chcesz grac(#kiedyssieprzyda)
+    chosen_team = NONE  # tu docelowo bedzie funkcja do wybierania ktora druzyna chcesz grac(#kiedyssieprzyda)
 
     all_players = pygame.sprite.Group()
     players_playing = pygame.sprite.Group()
@@ -176,9 +182,8 @@ def main():
 
     walls.add(team_left_line, team_right_line, up_line, down_line)
 
-    player_in_control = None
-
     marker_sprite = pygame.sprite.GroupSingle()
+    player_in_control = None
     marker = None
 
     stage = PREPARATION
@@ -213,18 +218,27 @@ def main():
             generate_obstacles(obstacles_player, all_players, map_obstacles)
             obstacles_player.add(map_obstacles)
             ball_obstacles.add(map_obstacles, walls)
-
-            ball.def_vel(6, 2)
-
-            marker = Marker(chosen_team[0])
+            ball.rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+            if team_with_ball == LEFT:
+                ball.def_vel(-4, 0)
+                ball.danger = RIGHT
+                marker = Marker(team_left[0])
+            if team_with_ball == RIGHT:
+                ball.def_vel(4, 0)
+                ball.danger = LEFT
+                marker = Marker(team_right[0])
+            chosen_team = team_with_ball
             marker_sprite.add(marker)
 
             stage = GAME
 
         elif stage == GAME:
             draw(walls, obstacles_player, all_players, ball_sprite, middle_line, marker_sprite)
-
-            player_in_control = change_player(chosen_team, player_in_control, events, marker)
+            score(games_won_left, games_won_right)
+            if chosen_team == LEFT:
+                player_in_control = change_player(team_left, player_in_control, events, marker)
+            if chosen_team == RIGHT:
+                player_in_control = change_player(team_right, player_in_control, events, marker)
             player_in_control.move(obstacles_player, players_playing, marker)
             player_in_control.catch_ball(ball, events)
 
@@ -238,8 +252,13 @@ def main():
 
             cue.update(SCREEN, ball)
             for event in events:
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN and ball.caught_by_player:
                     ball.throw_a_ball(cue)
+                if event.type == pygame.KEYUP and event.key == pygame.K_p:
+                    if chosen_team == LEFT:
+                        chosen_team = RIGHT
+                    else:
+                        chosen_team = LEFT
 
         elif stage == ENDGAME:
             if not team_left:
@@ -254,6 +273,7 @@ def main():
                 team_right.clear()
                 bench_left.clear()
                 bench_right.clear()
+                player_in_control = None
 
                 all_players.empty()
                 players_playing.empty()
