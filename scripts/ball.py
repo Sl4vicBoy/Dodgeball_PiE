@@ -61,8 +61,11 @@ class Ball(pygame.sprite.Sprite):
 
     def move(self, cue):
         if self.caught_by_player:
+            player_width = self.caught_by_player.image.get_width()
+            ball_width = self.image.get_width()
             cue.visible = True
-            self.rect.center = self.caught_by_player.rect.center
+            self.rect.centery = self.caught_by_player.rect.centery
+            self.rect.centerx = self.caught_by_player.rect.centerx + player_width/2 + ball_width
         else:
             self.vel *= self.DECELERATION
             self.rect.center += self.vel
