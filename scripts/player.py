@@ -1,7 +1,7 @@
 import pygame
 import os
 from math import sqrt
-from marker import Marker
+
 
 class Player(pygame.sprite.Sprite):
     VEL = 4
