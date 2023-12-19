@@ -13,7 +13,7 @@ class Obstacle(pygame.sprite.Sprite):
         self.color = color
 
         self.collision_ball = True
-        self.destroyable = False
+        self.destroyable = destroyable
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
@@ -50,10 +50,9 @@ class HpBar(pygame.sprite.Sprite):
         self.height = height
         self.max_health = max_health
         self.current_health = max_health
-        self.obstacle_rect = obstacle_rect
         self.color = color
         self.health_fraction = self.current_health / self.max_health
-        self.rect = pygame.Rect(self.obstacle_rect.x, self.obstacle_rect.y - self.height - 2, obstacle_rect.width, self.height)
+        self.rect = pygame.Rect(obstacle_rect.x, obstacle_rect.y - self.height - 2, obstacle_rect.width, self.height)
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)

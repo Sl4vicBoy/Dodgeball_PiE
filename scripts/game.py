@@ -54,6 +54,7 @@ def generate_obstacles(obstacles, all_players, map_obstacles):
             new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
         map_obstacles.add(new_obstacle)
         collision_detection_group.add(new_obstacle)
+
     for _ in range(0, 3):
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
