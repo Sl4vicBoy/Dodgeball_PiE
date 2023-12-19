@@ -106,6 +106,16 @@ def endgame(winner):
     pygame.display.flip()
 
 
+def score(games_won_left, games_won_right):
+    font = pygame.font.Font("freesansbold.ttf", 20)
+    left_score = font.render("L:" + str(games_won_left), False, (255, 255, 255))
+    right_score = font.render(str(games_won_right) + ':R', False, (255, 255, 255))
+    left_score_rect = left_score.get_rect(center=(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT + SCOREBOARD/2))
+    right_score_rect = right_score.get_rect(center=(SCREEN_WIDTH / 2 + 25, SCREEN_HEIGHT + SCOREBOARD/2))
+    SCREEN.blit(left_score, left_score_rect)
+    SCREEN.blit(right_score, right_score_rect)
+
+
 def change_player(team, player_in_control, events, marker):
     if player_in_control is not None:
         if player_in_control.team is not team[0].team or player_in_control.bench:
@@ -172,9 +182,8 @@ def main():
 
     walls.add(team_left_line, team_right_line, up_line, down_line)
 
-    player_in_control = None
-
     marker_sprite = pygame.sprite.GroupSingle()
+    player_in_control = None
     marker = None
 
     stage = PREPARATION
@@ -225,7 +234,7 @@ def main():
 
         elif stage == GAME:
             draw(walls, obstacles_player, all_players, ball_sprite, middle_line, marker_sprite)
-
+            score(games_won_left, games_won_right)
             if chosen_team == LEFT:
                 player_in_control = change_player(team_left, player_in_control, events, marker)
             if chosen_team == RIGHT:
