@@ -101,7 +101,8 @@ class Player(pygame.sprite.Sprite):
         obstacle_collision = pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask)
         player_collision = pygame.sprite.spritecollide(self, team, False, pygame.sprite.collide_mask)
 
-        player_collision.remove(self)
+        if self in player_collision:
+            player_collision.remove(self)
 
         if obstacle_collision or player_collision:
             self.rect.x, self.rect.y = current_x, current_y
