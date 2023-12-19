@@ -108,9 +108,7 @@ def endgame(winner):
 
 def change_player(team, player_in_control, events, marker):
     if player_in_control is not None:
-        if player_in_control.team is not team[0].team:
-            player_in_control = team[0]
-        if player_in_control.bench:
+        if player_in_control.team is not team[0].team or player_in_control.bench:
             player_in_control = team[0]
         for event in events:
             if event.type == pygame.KEYUP and event.key == pygame.K_z:
@@ -119,10 +117,9 @@ def change_player(team, player_in_control, events, marker):
                     player_in_control = team[0]
                 else:
                     player_in_control = team[index+1]
-        marker.change_player(player_in_control)
     else:
         player_in_control = team[0]
-        marker.change_player(player_in_control)
+    marker.change_player(player_in_control)
     return player_in_control
 
 
@@ -251,7 +248,7 @@ def main():
                 if event.type == pygame.KEYUP and event.key == pygame.K_p:
                     if chosen_team == LEFT:
                         chosen_team = RIGHT
-                    if chosen_team == RIGHT:
+                    else:
                         chosen_team = LEFT
 
         elif stage == ENDGAME:
@@ -267,6 +264,7 @@ def main():
                 team_right.clear()
                 bench_left.clear()
                 bench_right.clear()
+                player_in_control = None
 
                 all_players.empty()
                 players_playing.empty()
