@@ -1,8 +1,6 @@
 import pygame
 import os
-from constant_values import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
-from random import uniform
-from player import Player
+from constant_values import FPS
 
 
 class Ball(pygame.sprite.Sprite):
@@ -30,7 +28,10 @@ class Ball(pygame.sprite.Sprite):
 
     def maintain_collision_obstacle(self, obstacles):
         collision = pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask)
-        for obstacle in collision:
+        if collision:
+            obstacle = collision[0]
+            if obstacle.destroyable:
+                obstacle.update_hp()
             if (self.rect.bottom <= obstacle.rect.bottom + self.DIAMETER and
                     self.rect.top >= obstacle.rect.top - self.DIAMETER):
                 if self.rect.right <= obstacle.rect.left:
@@ -66,10 +67,10 @@ class Ball(pygame.sprite.Sprite):
         if self.caught_by_player:
             self.rect.center = self.caught_by_player.rect.center  # follow the players that caught you
         else:
-            self.vel *= self.DECELERATION
+            # self.vel *= self.DECELERATION
             self.rect.center += self.vel
             self.speed = pygame.math.Vector2.length(self.vel)
-            if self.speed < 3:
+            if self.speed < 2:
                 self.danger = False
             else:
                 self.danger = True

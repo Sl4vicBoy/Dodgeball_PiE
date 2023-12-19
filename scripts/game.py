@@ -1,5 +1,5 @@
 import pygame
-from random import randint, seed, uniform
+from random import randint, seed
 from player import Player
 from obstacle import Obstacle, Midline, DestroyableObstacle
 from ball import Ball
@@ -107,6 +107,9 @@ def endgame(winner):
 
 def change_player(team, player_in_control, events, marker):
     if player_in_control is not None:
+        if player_in_control.bench:
+            marker.change_player(team[0])
+            return team[0]
         for event in events:
             if event.type == pygame.KEYUP and event.key == pygame.K_z:
                 index = team.index(player_in_control)
