@@ -12,8 +12,6 @@ class Player(pygame.sprite.Sprite):
     player_img_down_direction = None
     player_images = None
 
-    marker = None
-
     @staticmethod
     def load_player_images():
         player_img = pygame.image.load(os.path.join('Assets', 'players', 'superswinka.png')).convert_alpha()
