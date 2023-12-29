@@ -18,7 +18,13 @@ class Obstacle(pygame.sprite.Sprite):
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
-
+    
+    @staticmethod
+    def get_impact_power(ball_velocity, max_ball_velocity):
+        vel_length = ball_velocity.length()
+        max_vel_length = max_ball_velocity.length()
+        impact_power  = vel_length/(2* max_vel_length)
+        return impact_power
 
 class Midline(Obstacle):
     def __init__(self, width, height, x, y, color='violet'):
@@ -37,12 +43,15 @@ class DestroyableObstacle(Obstacle):
         super().draw(screen)
         self.hp_bar.draw(screen)
 
-    def update_hp(self):
-        self.current_health -= 1
+    def update_hp(self,ball_velocity, max_ball_velocity):
+        self.current_health -= super().get_impact_power(ball_velocity,max_ball_velocity)*self.max_health
         if self.current_health > 0:
             self.hp_bar.hp_bar_update(self.current_health)
         else:
             self.kill()
+    
+    
+
 
 
 

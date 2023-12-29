@@ -6,7 +6,7 @@ from constant_values import FPS, LEFT, RIGHT, NONE
 
 class Ball(pygame.sprite.Sprite):
     DIAMETER = 20
-    DECELERATION = 1
+    DECELERATION = 0.995
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -24,6 +24,7 @@ class Ball(pygame.sprite.Sprite):
 
     def def_vel(self, x_vel, y_vel):
         self.vel = pygame.math.Vector2(x_vel, y_vel)
+        self.max_vel = pygame.math.Vector2(x_vel, y_vel) #do skalowania mocy uderzenia przy hp_bar
         self.dvel = pygame.math.Vector2(self.vel.x / (FPS ** 2), self.vel.y / (FPS ** 2))
 
     def maintain_collision_obstacle(self, obstacles):
@@ -31,7 +32,7 @@ class Ball(pygame.sprite.Sprite):
         if collision:
             obstacle = collision[0]
             if obstacle.destroyable:
-                obstacle.update_hp()
+                obstacle.update_hp(self.vel, self.max_vel)
             if (self.rect.bottom <= obstacle.rect.bottom + self.DIAMETER and
                     self.rect.top >= obstacle.rect.top - self.DIAMETER):
                 if self.rect.right <= obstacle.rect.left:
