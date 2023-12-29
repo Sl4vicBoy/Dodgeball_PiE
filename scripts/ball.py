@@ -27,12 +27,15 @@ class Ball(pygame.sprite.Sprite):
         self.max_vel = pygame.math.Vector2(x_vel, y_vel) #do skalowania mocy uderzenia przy hp_bar
         self.dvel = pygame.math.Vector2(self.vel.x / (FPS ** 2), self.vel.y / (FPS ** 2))
 
-    def maintain_collision_obstacle(self, obstacles):
+    def maintain_collision_obstacle(self, obstacles, players_playing):
         collision = pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask)
         if collision:
             obstacle = collision[0]
             if obstacle.destroyable:
-                obstacle.update_hp(self.vel, self.max_vel)
+                if obstacle.bomb == False:
+                    obstacle.update(self.vel, self.max_vel)
+                elif obstacle.bomb == True:
+                    obstacle.update(self.vel, self.max_vel, players_playing)
             if (self.rect.bottom <= obstacle.rect.bottom + self.DIAMETER and
                     self.rect.top >= obstacle.rect.top - self.DIAMETER):
                 if self.rect.right <= obstacle.rect.left:
