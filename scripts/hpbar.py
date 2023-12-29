@@ -9,7 +9,7 @@ class HpBar(pygame.sprite.Sprite):
         self.max_health = max_health
         self.current_health = max_health
         self.color = color
-        self.color_num = 3 # max_health przeszkody nie musi być 4
+        self.color_num = 3
         self.health_fraction = self.current_health / self.max_health
         self.rect = pygame.Rect(obstacle_rect.x, obstacle_rect.y - self.height - 2, obstacle_rect.width, self.height)
 
@@ -20,5 +20,5 @@ class HpBar(pygame.sprite.Sprite):
         self.current_health = new_health
         self.health_fraction = self.current_health / self.max_health
         self.rect.width = self.rect.width * self.health_fraction
-        self.color_num = math.ceil(new_health * (3/self.max_health)) #scaling (0,max_health) to (0,3)
+        self.color_num = math.ceil(new_health * (3/self.max_health)) 
         self.color = HP_COLORS[self.color_num]

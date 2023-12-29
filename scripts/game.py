@@ -1,7 +1,7 @@
 import pygame
 from random import randint, seed
 from player import Player
-from obstacle import Obstacle, Midline, DestroyableObstacle
+from obstacle import Obstacle, Midline, HpObstacle, BombObstacle
 from ball import Ball, Cue
 from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, NONE,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
@@ -55,16 +55,26 @@ def generate_obstacles(obstacles, all_players, map_obstacles):
         map_obstacles.add(new_obstacle)
         collision_detection_group.add(new_obstacle)
 
-    for _ in range(0, 3):
+    for _ in range(0, 2):
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-        new_obstacle = DestroyableObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y,max_health=8)
+        new_obstacle = HpObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y,max_health=8)
         while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
             x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
             y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-            new_obstacle = DestroyableObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
+            new_obstacle = HpObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
         map_obstacles.add(new_obstacle)
         collision_detection_group.add(new_obstacle)
+    
+    x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
+    y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
+    new_obstacle = BombObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
+    while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
+            x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
+            y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
+            new_obstacle = BombObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
+    map_obstacles.add(new_obstacle)
+    collision_detection_group.add(new_obstacle)
 
 
 def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
@@ -243,7 +253,7 @@ def main():
             player_in_control.catch_ball(ball, events)
 
             ball.move(cue)
-            ball.maintain_collision_obstacle(ball_obstacles)
+            ball.maintain_collision_obstacle(ball_obstacles, players_playing)
 
             if ball.check_collision_player(players_playing):
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
