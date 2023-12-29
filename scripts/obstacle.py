@@ -1,5 +1,6 @@
 import pygame
-from constant_values import BORDER_COLOR, HP_COLORS
+from constant_values import BORDER_COLOR
+from hpbar import HpBar
 
 
 class Obstacle(pygame.sprite.Sprite):  
@@ -26,11 +27,11 @@ class Midline(Obstacle):
         
 
 class DestroyableObstacle(Obstacle):
-    def __init__(self, width, height, x, y, color='blue', destroyable=True):
+    def __init__(self, width, height, x, y, color='blue', destroyable=True, max_health = 4):
         super().__init__(width, height, x, y, color, destroyable)
-        self.max_health = 4
-        self.current_health = 4
-        self.hp_bar = HpBar(4, self.rect)
+        self.max_health = max_health
+        self.current_health = max_health
+        self.hp_bar = HpBar(max_health, self.rect)
 
     def draw(self, screen):
         super().draw(screen)
@@ -44,21 +45,4 @@ class DestroyableObstacle(Obstacle):
             self.kill()
 
 
-class HpBar(pygame.sprite.Sprite):
-    def __init__(self, max_health, obstacle_rect, color='blue', height=5):
-        super().__init__()
-        self.height = height
-        self.max_health = max_health
-        self.current_health = max_health
-        self.color = color
-        self.health_fraction = self.current_health / self.max_health
-        self.rect = pygame.Rect(obstacle_rect.x, obstacle_rect.y - self.height - 2, obstacle_rect.width, self.height)
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self.rect)
-
-    def hp_bar_update(self, new_health):
-        self.current_health = new_health
-        self.health_fraction = self.current_health / self.max_health
-        self.rect.width = self.rect.width * self.health_fraction
-        self.color = HP_COLORS[new_health]
