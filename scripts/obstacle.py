@@ -54,7 +54,7 @@ class HpObstacle(Obstacle):
             self.kill()
 
 class BombObstacle(Obstacle):
-    def __init__(self, width, height, x, y, color = 'crimson', destroyable=True, max_velocity_rate = 0.7, bomb_radius =  300):
+    def __init__(self, width, height, x, y, color = 'crimson', destroyable=True, max_velocity_rate = 0.7, bomb_radius =  250):
         super().__init__(width, height, x, y, color, destroyable)
         self.max_velocity_rate = max_velocity_rate
         self.bomb = True
