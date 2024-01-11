@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
 
     @staticmethod
     def load_player_images():
-        player_img = pygame.image.load(os.path.join('Assets', 'players', 'superswinka.png')).convert_alpha()
+        player_img = pygame.image.load(os.path.join('scripts/Assets', 'players', 'superswinka.png')).convert_alpha()
         player_img_scaled = pygame.transform.scale_by(player_img, 0.4)
 
         Player.player_img_left_direction = pygame.transform.flip(player_img_scaled, True, False)
@@ -41,25 +41,7 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center=(x, y))
 
-    def __rotate__(self, keys):
-        if keys[pygame.K_a] and self.direction != "left":
-            self.direction = "left"
-            self.image = Player.player_images[1]
-            self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
-        if keys[pygame.K_d] and self.direction != "right":
-            self.direction = "right"
-            self.image = Player.player_images[0]
-            self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
-        if keys[pygame.K_s] and self.direction != "down":
-            self.direction = "down"
-            self.image = Player.player_images[3]
-            self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
-        if keys[pygame.K_w] and self.direction != "up":
-            self.direction = "up"
-            self.image = Player.player_images[2]
-            self.rect = self.image.get_rect(center=(self.rect.centerx, self.rect.centery))
-
-    def move(self, obstacles, team, marker):
+    def move_right(self, obstacles, team, marker):
         keys = pygame.key.get_pressed()
 
         current_x = self.rect.x
@@ -67,8 +49,6 @@ class Player(pygame.sprite.Sprite):
         prev_rect = self.rect
         prev_img = self.image
         prev_direction = self.direction
-
-        self.__rotate__(keys)
 
         x_movement = 0
         y_movement = 0
@@ -109,6 +89,58 @@ class Player(pygame.sprite.Sprite):
             self.rect = prev_rect
 
         marker.move_marker()
+    
+    def move_left(self, obstacles, team, marker):
+        keys = pygame.key.get_pressed()
+
+        current_x = self.rect.x
+        current_y = self.rect.y
+        prev_rect = self.rect
+        prev_img = self.image
+        prev_direction = self.direction
+
+        
+
+        x_movement = 0
+        y_movement = 0
+
+        if keys[pygame.K_d] and self.direction == "right":
+            x_movement += self.VEL
+        elif keys[pygame.K_d]:
+            x_movement += 0.8 * self.VEL
+
+        if keys[pygame.K_a] and self.direction == "left":
+            x_movement -= self.VEL
+        elif keys[pygame.K_a]:
+            x_movement -= 0.8 * self.VEL
+
+        if keys[pygame.K_w] and self.direction == "up":
+            y_movement -= self.VEL
+        elif keys[pygame.K_w]:
+            y_movement -= 0.8 * self.VEL
+
+        if keys[pygame.K_s] and self.direction == "down":
+            y_movement += self.VEL
+        elif keys[pygame.K_s]:
+            y_movement += 0.8 * self.VEL
+
+        self.rect.x += x_movement
+        self.rect.y += y_movement
+
+        obstacle_collision = pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask)
+        player_collision = pygame.sprite.spritecollide(self, team, False, pygame.sprite.collide_mask)
+
+        if self in player_collision:
+            player_collision.remove(self)
+
+        if obstacle_collision or player_collision:
+            self.rect.x, self.rect.y = current_x, current_y
+            self.direction = prev_direction
+            self.image = prev_img
+            self.rect = prev_rect
+
+        marker.move_marker()
+
 
     def catch_ball(self, ball, events):
         x = self.rect.centerx
