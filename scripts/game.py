@@ -68,14 +68,6 @@ def generate_obstacles(obstacles, all_players, map_obstacles):
     
     x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
     y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-    '''new_obstacle = BombObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
-    while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
-            x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
-            y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-            new_obstacle = BombObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
-    map_obstacles.add(new_obstacle)
-    collision_detection_group.add(new_obstacle)'''
-
 
 def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
     for player in players_playing:
