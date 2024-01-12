@@ -1,7 +1,7 @@
 import pygame
 from random import randint, seed
 from player import Player
-from obstacle import Obstacle, Midline, HpObstacle, BombObstacle
+from obstacle import Obstacle, Midline, HpObstacle
 from ball import Ball, Cue
 from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, NONE,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
@@ -39,34 +39,18 @@ def draw(walls, all_objects, all_players, ball, middle_line, marker):
     all_players.update()
 
 
-def generate_obstacles(obstacles, all_players, map_obstacles):
-    for _ in range(0, 3):
-        x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
-        y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-        new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
-        collision_detection_group = pygame.sprite.Group()
-        collision_detection_group.add(obstacles, all_players, map_obstacles)
+def generate_obstacles(map_obstacles):
+     
+   for coord in [(100, 100), (570, 470), (450, 300)]:
+    x, y = coord
+    new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
+    map_obstacles.add(new_obstacle)
+    
 
-        while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
-            x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
-            y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-            new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
-        map_obstacles.add(new_obstacle)
-        collision_detection_group.add(new_obstacle)
-
-    for _ in range(0, 2):
-        x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
-        y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-        new_obstacle = HpObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y, max_health=8)
-        while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
-            x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
-            y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-            new_obstacle = HpObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
-        map_obstacles.add(new_obstacle)
-        collision_detection_group.add(new_obstacle)
-
-    x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
-    y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
+   for coord in [(430, 120), (300, 400), (120, 320)]:
+       x, y = coord
+       new_obstacle = HpObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
+       map_obstacles.add(new_obstacle)
 
 
 def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
@@ -223,7 +207,7 @@ def main():
 
             obstacles_player.add(walls, middle_line)
 
-            generate_obstacles(obstacles_player, all_players, map_obstacles)
+            generate_obstacles(map_obstacles)
             obstacles_player.add(map_obstacles)
             ball_obstacles.add(map_obstacles, walls)
             ball.rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
