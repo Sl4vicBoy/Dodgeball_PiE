@@ -2,7 +2,7 @@ import pygame
 from random import randint, seed
 from player import Player
 from obstacle import Obstacle, Midline, HpObstacle
-from ball import Ball, Cue
+from ball import Ball, Target
 from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, NONE,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
 from marker import Marker
@@ -146,12 +146,12 @@ def main():
     obstacles_player = pygame.sprite.Group()
     ball_obstacles = pygame.sprite.Group()
     ball_sprite = pygame.sprite.GroupSingle()
-    cue_sprite = pygame.sprite.GroupSingle()
+    target_sprite = pygame.sprite.GroupSingle()
 
     ball = Ball(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-    cue = Cue(ball.rect.center)
+    target = Target(ball.rect.center)
     ball_sprite.add(ball)
-    cue_sprite.add(cue)
+    target_sprite.add(target)
 
     players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
                                       (7 * SCREEN_WIDTH / 10, SCREEN_HEIGHT / 2),
@@ -235,7 +235,7 @@ def main():
             player_in_control_left.catch_ball(ball, events)
             player_in_control_right.catch_ball(ball, events)
 
-            ball.move(cue)
+            ball.move(target)
             ball.maintain_collision_obstacle(ball_obstacles, players_playing)
 
             if ball.check_collision_player(players_playing):
@@ -243,10 +243,10 @@ def main():
             if not team_left or not team_right:
                 stage = ENDGAME
 
-            cue.update(SCREEN, ball)
+            target.update(SCREEN, ball)
             for event in events:
                 if event.type == pygame.MOUSEBUTTONDOWN and ball.caught_by_player:
-                    ball.throw_a_ball(cue)
+                    ball.throw_a_ball(target)
 
         elif stage == ENDGAME:
             if not team_left:
