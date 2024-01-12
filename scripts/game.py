@@ -27,7 +27,6 @@ catch_right = 0
 
 
 def draw(walls, all_objects, all_players, ball, middle_line, marker):
-   
     SCREEN.fill('Green')
 
     middle_line.draw(SCREEN)
@@ -58,16 +57,17 @@ def generate_obstacles(obstacles, all_players, map_obstacles):
     for _ in range(0, 2):
         x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
         y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
-        new_obstacle = HpObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y,max_health=8)
+        new_obstacle = HpObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y, max_health=8)
         while pygame.sprite.spritecollide(new_obstacle, collision_detection_group, False):
             x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
             y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
             new_obstacle = HpObstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
         map_obstacles.add(new_obstacle)
         collision_detection_group.add(new_obstacle)
-    
+
     x = randint(0, SCREEN_WIDTH - MAX_WIDTH_OBSTACLE)
     y = randint(0, SCREEN_HEIGHT - MAX_HEIGHT_OBSTACLE)
+
 
 def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
     for player in players_playing:
@@ -112,8 +112,8 @@ def score(games_won_left, games_won_right):
     font = pygame.font.Font("freesansbold.ttf", 20)
     left_score = font.render("L:" + str(games_won_left), False, (255, 255, 255))
     right_score = font.render(str(games_won_right) + ':R', False, (255, 255, 255))
-    left_score_rect = left_score.get_rect(center=(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT + SCOREBOARD/2))
-    right_score_rect = right_score.get_rect(center=(SCREEN_WIDTH / 2 + 25, SCREEN_HEIGHT + SCOREBOARD/2))
+    left_score_rect = left_score.get_rect(center=(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT + SCOREBOARD / 2))
+    right_score_rect = right_score.get_rect(center=(SCREEN_WIDTH / 2 + 25, SCREEN_HEIGHT + SCOREBOARD / 2))
     SCREEN.blit(left_score, left_score_rect)
     SCREEN.blit(right_score, right_score_rect)
 
@@ -128,13 +128,13 @@ def change_player(team, player_in_control, events, marker):
                 if index + 1 >= len(team):
                     player_in_control = team[0]
                 else:
-                    player_in_control = team[index+1]
+                    player_in_control = team[index + 1]
             elif player_in_control.team == 1 and event.type == pygame.KEYUP and event.key == pygame.K_p:
                 index = team.index(player_in_control)
                 if index + 1 >= len(team):
                     player_in_control = team[0]
                 else:
-                    player_in_control = team[index+1]
+                    player_in_control = team[index + 1]
     else:
         player_in_control = team[0]
     marker.change_player(player_in_control)
@@ -168,7 +168,7 @@ def main():
     cue = Cue(ball.rect.center)
     ball_sprite.add(ball)
     cue_sprite.add(cue)
-    
+
     players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
                                       (7 * SCREEN_WIDTH / 10, SCREEN_HEIGHT / 2),
                                       (3 * SCREEN_WIDTH / 4, 3 * SCREEN_HEIGHT / 4)]
@@ -233,7 +233,7 @@ def main():
             if team_with_ball == RIGHT:
                 ball.def_vel(4, 0)
                 ball.danger = LEFT
-            #chosen_team = team_with_ball
+            # chosen_team = team_with_ball
             marker_left = Marker(team_left[0])
             marker_right = Marker(team_right[0])
             marker_sprite.add(marker_left, marker_right)
@@ -243,11 +243,11 @@ def main():
         elif stage == GAME:
             draw(walls, obstacles_player, all_players, ball_sprite, middle_line, marker_sprite)
             score(games_won_left, games_won_right)
-            
+
             player_in_control_left = change_player(team_left, player_in_control_left, events, marker_left)
             player_in_control_right = change_player(team_right, player_in_control_right, events, marker_right)
-            player_in_control_right.move_right(obstacles_player, players_playing, marker_right)
-            player_in_control_left.move_left(obstacles_player, players_playing, marker_left)
+            player_in_control_right.move(obstacles_player, players_playing, marker_right)
+            player_in_control_left.move(obstacles_player, players_playing, marker_left)
             player_in_control_left.catch_ball(ball, events)
             player_in_control_right.catch_ball(ball, events)
 
@@ -263,7 +263,6 @@ def main():
             for event in events:
                 if event.type == pygame.MOUSEBUTTONDOWN and ball.caught_by_player:
                     ball.throw_a_ball(cue)
-                
 
         elif stage == ENDGAME:
             if not team_left:

@@ -4,8 +4,8 @@ from constant_values import BORDER_COLOR
 from hpbar import HpBar
 
 
-class Obstacle(pygame.sprite.Sprite):  
-    def __init__(self, width, height, x, y,  color=BORDER_COLOR, destroyable=False):
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self, width, height, x, y, color=BORDER_COLOR, destroyable=False):
         super().__init__()
         self.image = pygame.Surface((width, height))
         self.image.fill(color)
@@ -20,22 +20,23 @@ class Obstacle(pygame.sprite.Sprite):
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
-    
+
     @staticmethod
     def get_impact_power(ball_velocity, max_ball_velocity):
         vel_length = ball_velocity.length()
         max_vel_length = max_ball_velocity.length()
-        impact_power  = vel_length/ max_vel_length 
+        impact_power = vel_length / max_vel_length
         return impact_power
+
 
 class Midline(Obstacle):
     def __init__(self, width, height, x, y, color='violet'):
         super().__init__(width, height, x, y, color)
         self.collision_ball = False
-        
+
 
 class HpObstacle(Obstacle):
-    def __init__(self, width, height, x, y, color='blue', destroyable=True, max_health = 4):
+    def __init__(self, width, height, x, y, color='blue', destroyable=True, max_health=4):
         super().__init__(width, height, x, y, color, destroyable)
         self.max_health = max_health
         self.current_health = max_health
@@ -46,15 +47,16 @@ class HpObstacle(Obstacle):
         super().draw(screen)
         self.hp_bar.draw(screen)
 
-    def update(self,ball_velocity, max_ball_velocity):
-        self.current_health -= super().get_impact_power(ball_velocity,max_ball_velocity)*(self.max_health /2)
+    def update(self, ball_velocity, max_ball_velocity):
+        self.current_health -= super().get_impact_power(ball_velocity, max_ball_velocity) * (self.max_health / 2)
         if self.current_health > 0:
             self.hp_bar.hp_bar_update(self.current_health)
         else:
             self.kill()
 
+
 class BombObstacle(Obstacle):
-    def __init__(self, width, height, x, y, color = 'crimson', destroyable=True, max_velocity_rate = 0.7, bomb_radius =  250):
+    def __init__(self, width, height, x, y, color='crimson', destroyable=True, max_velocity_rate=0.7, bomb_radius=250):
         super().__init__(width, height, x, y, color, destroyable)
         self.max_velocity_rate = max_velocity_rate
         self.bomb = True
@@ -64,21 +66,13 @@ class BombObstacle(Obstacle):
 
     def draw(self, screen):
         super().draw(screen)
-    
-    def update(self,ball_velocity, max_ball_velocity, players_playing):
+
+    def update(self, ball_velocity, max_ball_velocity, players_playing):
         velocity_rate = super().get_impact_power(ball_velocity, max_ball_velocity)
-        if velocity_rate > self.max_velocity_rate :
+        if velocity_rate > self.max_velocity_rate:
             for player in players_playing:
-                if player.rect.x in range(self.bomb_x_range[0],self.bomb_x_range[1]) and player.rect.y in range(self.bomb_y_range[0], self.bomb_y_range[1]):
+                if player.rect.x in range(self.bomb_x_range[0], self.bomb_x_range[1]) and player.rect.y in range(
+                        self.bomb_y_range[0], self.bomb_y_range[1]):
                     player.bench = True
-                 
+
             self.kill()
-        
-         
-
-    
-    
-
-
-
-
