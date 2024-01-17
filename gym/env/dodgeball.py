@@ -5,7 +5,7 @@ import pygame
 from random import randint, seed
 from player import Player
 from obstacle import Obstacle, Midline, HpObstacle
-from ball import Ball, Cue
+from ball import Ball, Target
 from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, NONE,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
 from marker import Marker
@@ -42,10 +42,10 @@ class DodgeballEnv(gym.Env):
         self.team_left = None
         self.player_controlled_left = None
         self.player_controlled_right = None
-
+        self.is_caught = 0
         self.num_players = 6
         self.action_space = spaces.Discrete(10)
-        self.observation_space = spaces.Box(low=0, high=255, shape=(self.num_players * 2 + 4,), dtype=np.float32)
+        self.observation_space = spaces.Box(low = self.get_low(), high=self.get_high(), shape=(self.num_players * 2 + 3), dtype=np.float32)
 
         self.window = None
         self.clock = None
@@ -64,6 +64,8 @@ class DodgeballEnv(gym.Env):
         self.ball_obstacles = pygame.sprite.Group()
         self.ball_sprite = pygame.sprite.GroupSingle()
         self.cue_sprite = pygame.sprite.GroupSingle()
+        self.players_playing = pygame.sprite.Group()
+
 
         players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
                                           (7 * SCREEN_WIDTH / 10, SCREEN_HEIGHT / 2),
@@ -88,7 +90,7 @@ class DodgeballEnv(gym.Env):
 
         self.walls.add(self.team_left_line, self.team_right_line, self.up_line, self.down_line)
 
-        self.cue = Cue(self.ball.rect.center)
+        self.cue = Target(self.ball.rect.center)
         self.ball_sprite.add(self.ball)
         self.cue_sprite.add(self.cue)
 
@@ -104,14 +106,14 @@ class DodgeballEnv(gym.Env):
             for xy in players_right_defensive_coords:
                 self.team_right.append(Player(RIGHT, xy[0], xy[1]))
 
-        self.all_players.add(team_right, team_left)
+        self.all_players.add(self.team_right, self.team_left)
         self.players_playing.add(self.all_players)
 
-        self.obstacles_player.add(walls, middle_line)
+        self.obstacles_player.add(self.walls, self.middle_line)
         self.generate_obstacles()
         self.obstacles_player.add(self.map_obstacles)
 
-        self.ball_obstacles.add(map_obstacles, walls)
+        self.ball_obstacles.add(self.map_obstacles, self.walls)
         self.ball.rect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         if team_with_ball == LEFT:
             self.ball.def_vel(-4, 0)
@@ -121,9 +123,9 @@ class DodgeballEnv(gym.Env):
             self.ball.danger = LEFT
 
         self.marker_sprite = pygame.sprite.Group()
-        self.marker_left = Marker(team_left[0])
-        self.marker_right = Marker(team_right[0])
-        self.marker_sprite.add(marker_left, marker_right)
+        self.marker_left = Marker(self.team_left[0])
+        self.marker_right = Marker(self.team_right[0])
+        self.marker_sprite.add(self.marker_left, self.marker_right)
 
         self.player_controlled_left = self.team_left[0]
         self.player_controlled_right = self.team_right[0]
@@ -163,20 +165,33 @@ class DodgeballEnv(gym.Env):
         for player in self.all_players:
             player_data.extend([player.rect.x, player.rect.y])
 
-        ball_data = [self.ball.rect.x, self.ball.rect.y]
-
-        obstacle_data = []  # tu petla for na polozenie wszystkich obstacles
+        ball_data = [self.ball.rect.x, self.ball.rect.y, self.is_caught]
 
         observation = np.array(player_data + ball_data, dtype=np.float32)
 
         return observation
+    
+    def get_high(self):
+        player_xy_high = np.array([600,800]*self.num_players, dtype = np.float32)
+        ball_xy_high = np.array([600,800], dtype= np.float32)
+        is_caught_high = 1
+
+        return np.concatenate([player_xy_high, ball_xy_high, is_caught_high])
+    
+    def get_low(self):
+        player_xy_low = np.array([0,0]*self.num_players, dtype = np.float32)
+        ball_xy_low = np.array([0,0], dtype= np.float32)
+        is_caught_low = 0
+
+        return np.concatenate([player_xy_low, ball_xy_low, is_caught_low])
+
 
     def close(self):
         if self.window is not None:
             pygame.display.quit()
             pygame.quit()
 
-    def generate_obstacles(self, map_obstacles):
+    def generate_obstacles(self):
         for coord in [(100, 100), (570, 470), (450, 300)]:
             x, y = coord
             new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
