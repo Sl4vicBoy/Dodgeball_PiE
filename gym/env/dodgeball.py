@@ -101,7 +101,7 @@ class DodgeballEnv(gym.Env):
     def _get_info(self):
         pass
 
-    def reset(self, seed=None, options=None):
+    def reset(self, seed=None):
         super().reset(seed=seed)
         self.ball = Ball(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.all_players = pygame.sprite.Group()
@@ -232,7 +232,7 @@ class DodgeballEnv(gym.Env):
         info = None  # jakies get info mozemy zaimplementowac
         return observation, reward, terminated, False, info
 
-    def render(self, mode="human"):  # tu jest rysowanie i ustawianie wszystkiego -> pygame
+    def render(self):  # tu jest rysowanie i ustawianie wszystkiego -> pygame
         if self.window is None:
             pygame.init()
             pygame.display.init()
@@ -266,19 +266,18 @@ class DodgeballEnv(gym.Env):
         return observation
     
     def get_high(self):
-        player_xy_high = np.array([600,800]*self.num_players, dtype = np.float32)
-        ball_xy_high = np.array([600,800], dtype= np.float32)
+        player_xy_high = np.array([600, 800]*self.num_players, dtype=np.float32)
+        ball_xy_high = np.array([600, 800], dtype=np.float32)
         is_caught_high = 1
 
         return np.concatenate([player_xy_high, ball_xy_high, is_caught_high])
     
     def get_low(self):
-        player_xy_low = np.array([0,0]*self.num_players, dtype = np.float32)
-        ball_xy_low = np.array([0,0], dtype= np.float32)
+        player_xy_low = np.array([0, 0]*self.num_players, dtype=np.float32)
+        ball_xy_low = np.array([0, 0], dtype=np.float32)
         is_caught_low = 0
 
         return np.concatenate([player_xy_low, ball_xy_low, is_caught_low])
-
 
     def close(self):
         if self.window is not None:
