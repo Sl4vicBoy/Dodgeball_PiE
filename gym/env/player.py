@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center=(x, y))
 
-    def move(self, vector, marker):
+    def move(self, vector, marker, obstacles, team):
         current_x = self.rect.x
         current_y = self.rect.y
         prev_rect = self.rect

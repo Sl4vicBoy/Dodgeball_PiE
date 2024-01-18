@@ -1,14 +1,14 @@
 import gym
-from gym import spaces
 import numpy as np
 import pygame
 from random import randint
 from player import Player
 from obstacle import Obstacle, Midline, HpObstacle
-from ball import Ball, Target
+from ball import Ball
 from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, NONE,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
 from marker import Marker
+from gym import spaces
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + SCOREBOARD))
 pygame.display.set_caption('Dodge-ball')
@@ -117,7 +117,6 @@ class DodgeballEnv(gym.Env):
         self.obstacles_player = pygame.sprite.Group()
         self.ball_obstacles = pygame.sprite.Group()
         self.ball_sprite = pygame.sprite.GroupSingle()
-        self.cue_sprite = pygame.sprite.GroupSingle()
         self.players_playing = pygame.sprite.Group()
 
         players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
@@ -142,10 +141,7 @@ class DodgeballEnv(gym.Env):
         self.down_line = Obstacle(SCREEN_WIDTH, BORDERS_PARAMETER, 0, SCREEN_HEIGHT - BORDERS_PARAMETER, BORDER_COLOR)
 
         self.walls.add(self.team_left_line, self.team_right_line, self.up_line, self.down_line)
-
-        self.cue = Target(self.ball.rect.center)
         self.ball_sprite.add(self.ball)
-        self.cue_sprite.add(self.cue)
 
         team_with_ball = randint(LEFT, RIGHT)
         if team_with_ball == RIGHT:
@@ -189,13 +185,13 @@ class DodgeballEnv(gym.Env):
         return observation, info
 
     def step(self, action):
-        self.ball.move(self.cue)
+        self.ball.move()
         self.ball.maintain_collision_obstacle(self.ball_obstacles, self.players_playing)
 
         if self.ball.caught_by_player is None:
             move_vector_right, move_vector_left, switch_right, switch_left = action["move"]
-            self.player_controlled_right.move(move_vector_right, self.marker_right)
-            self.player_controlled_right.move(move_vector_left, self.marker_left)
+            self.player_controlled_right.move(move_vector_right, self.marker_right, self.obstacles_player, self.team_right)
+            self.player_controlled_left.move(move_vector_left, self.marker_left, self.obstacles_player, self.team_left)
             if switch_right:
                 self.player_controlled_right = change_player(self.team_right, self.player_controlled_right,
                                                              self.marker_right)
@@ -208,24 +204,24 @@ class DodgeballEnv(gym.Env):
             throwing_angle, move_vector, switch = action["throw"]
 
             if self.ball.caught_by_player.team == RIGHT:
-                self.player_controlled_left.move(move_vector, self.marker_left)
+                self.player_controlled_left.move(move_vector, self.marker_left, self.obstacles_player, self.team_left)
                 if switch:
                     self.player_controlled_left = change_player(self.team_left,
                                                   self.player_controlled_left, self.marker_left)
             else:
-                self.player_controlled_right.move(move_vector, self.marker_left)
+                self.player_controlled_right.move(move_vector, self.marker_left, self.obstacles_player, self.team_right)
                 if switch:
                     self.player_controlled_right = change_player(self.team_right,
                                                                  self.player_controlled_right, self.marker_right)
 
-            self.ball.throw_a_ball(self.cue, throwing_angle)
+            self.ball.throw_a_ball(throwing_angle)
 
         terminated = False
 
         if self.ball.check_collision_obstacle(self.ball_obstacles, self.players_playing):
             check_benched(self.players_playing, self.bench_left, self.bench_right, self.team_left, self.team_right)
 
-        if not team_left or not team_right:
+        if not self.team_left or not self.team_right:
             terminated = True
         observation = self._get_observation()
         reward = 0  # zapytac jeszcze raz !!!
