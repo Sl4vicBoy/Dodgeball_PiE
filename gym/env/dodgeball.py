@@ -2,7 +2,7 @@ import gym
 from gym import spaces
 import numpy as np
 import pygame
-from random import randint, seed
+from random import randint
 from player import Player
 from obstacle import Obstacle, Midline, HpObstacle
 from ball import Ball, Cue
@@ -15,14 +15,49 @@ pygame.display.set_caption('Dodge-ball')
 Player.load_player_images()
 
 
+def check_benched(players_playing, bench_left, bench_right, team_left, team_right):
+    for player in players_playing:
+        if player.bench:
+            players_playing.remove(player)
+            if player.team == RIGHT:
+                player.image = Player.player_images[1]
+                team_right.remove(player)
+                bench_right.append(player)
+            if player.team == LEFT:
+                player.image = Player.player_images[0]
+                team_left.remove(player)
+                bench_left.append(player)
+            player.rect = player.image.get_rect()
+
+    width = Player.player_img_left_direction.get_width()
+    for count, player in enumerate(bench_left):
+        player.rect.center = (SCOREBOARD / 2 + width * count, SCREEN_HEIGHT + SCOREBOARD / 2)
+    for count, player in enumerate(bench_right):
+        player.rect.center = (SCREEN_WIDTH - (SCOREBOARD / 2 + width * count), SCREEN_HEIGHT + SCOREBOARD / 2)
+
+
+def change_player(team, player_in_control, marker):
+    index = team.index(player_in_control)
+    if index + 1 >= len(team):
+        player_in_control = team[0]
+    else:
+        player_in_control = team[index + 1]
+    marker.change_player(player_in_control)
+    return player_in_control
+
+
 class DodgeballEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 10}
 
     def __init__(self):
         super(DodgeballEnv, self).__init__()
+
         self.cue = None
         self.ball = None
         self.all_players = None
+        self.bench_left = None
+        self.bench_right = None
+        self.players_playing = None
         self.marker_left = None
         self.marker_right = None
         self.walls = None
@@ -44,7 +79,19 @@ class DodgeballEnv(gym.Env):
         self.player_controlled_right = None
 
         self.num_players = 6
-        self.action_space = spaces.Discrete(10)
+        self.action_space = spaces.Dict({
+            "move": Tuple([
+                Box(low=-10, high=10, shape=(2,), dtype=np.float32),
+                Box(low=-10, high=10, shape=(2,), dtype=np.float32),
+                Discrete(2),
+                Discrete(2)
+            ]),
+            "throw": Tuple([
+                Box(low=np.radians(-90), high=np.radians(90), shape=(1,), dtype=np.float32),
+                Box(low=-10, high=10, shape=(2,), dtype=np.float32),
+                Discrete(2)
+            ])
+        })
         self.observation_space = spaces.Box(low=0, high=255, shape=(self.num_players * 2 + 4,), dtype=np.float32)
 
         self.window = None
@@ -58,12 +105,19 @@ class DodgeballEnv(gym.Env):
         self.ball = Ball(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.all_players = pygame.sprite.Group()
 
+        self.team_left = []
+        self.team_right = []
+
+        self.bench_left = []
+        self.bench_right = []
+
         self.walls = pygame.sprite.Group()
         self.map_obstacles = pygame.sprite.Group()
         self.obstacles_player = pygame.sprite.Group()
         self.ball_obstacles = pygame.sprite.Group()
         self.ball_sprite = pygame.sprite.GroupSingle()
         self.cue_sprite = pygame.sprite.GroupSingle()
+        self.players_playing = pygame.sprite.Group()
 
         players_right_offensive_coords = [(3 * SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4),
                                           (7 * SCREEN_WIDTH / 10, SCREEN_HEIGHT / 2),
@@ -135,6 +189,47 @@ class DodgeballEnv(gym.Env):
 
     def step(self, action):
         self.ball.move(self.cue)
+        self.ball.maintain_collision_obstacle(self.ball_obstacles, self.players_playing)
+
+        if self.ball.caught_by_player is None:
+            move_vector_right, move_vector_left, switch_right, switch_left = action["move"]
+            self.player_controlled_right.move(move_vector_right, self.marker_right)
+            self.player_controlled_right.move(move_vector_left, self.marker_left)
+            if switch_right:
+                self.player_controlled_right = change_player(self.team_right, self.player_controlled_right,
+                                                             self.marker_right)
+            if switch_left:
+                self.player_controlled_left = change_player(self.team_left, self.player_controlled_left,
+                                                            self.marker_left)
+            self.player_controlled_left.catch_ball(self.ball)
+            self.player_controlled_right.catch_ball(self.ball)
+        else:
+            throwing_angle, move_vector, switch = action["throw"]
+
+            if self.ball.caught_by_player.team == RIGHT:
+                self.player_controlled_left.move(move_vector, self.marker_left)
+                if switch:
+                    self.player_controlled_left = change_player(self.team_left,
+                                                  self.player_controlled_left, self.marker_left)
+            else:
+                self.player_controlled_right.move(move_vector, self.marker_left)
+                if switch:
+                    self.player_controlled_right = change_player(self.team_right,
+                                                                 self.player_controlled_right, self.marker_right)
+
+            self.ball.throw_a_ball(self.cue, throwing_angle)
+
+        terminated = False
+
+        if self.ball.check_collision_obstacle(self.ball_obstacles, self.players_playing):
+            check_benched(self.players_playing, self.bench_left, self.bench_right, self.team_left, self.team_right)
+
+        if not team_left or not team_right:
+            terminated = True
+        observation = self._get_observation()
+        reward = 0  # zapytac jeszcze raz !!!
+        info = None  # jakies get info mozemy zaimplementowac
+        return observation, reward, terminated, False, info
 
     def render(self, mode="human"):  # tu jest rysowanie i ustawianie wszystkiego -> pygame
         if self.window is None:
@@ -176,7 +271,7 @@ class DodgeballEnv(gym.Env):
             pygame.display.quit()
             pygame.quit()
 
-    def generate_obstacles(self, map_obstacles):
+    def generate_obstacles(self):
         for coord in [(100, 100), (570, 470), (450, 300)]:
             x, y = coord
             new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
