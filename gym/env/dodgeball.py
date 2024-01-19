@@ -91,7 +91,7 @@ class DodgeballEnv(gym.Env):
                 Discrete(2)
             ])
         })
-        self.observation_space = spaces.Box(low=0, high=255, shape=(self.num_players * 2 + 4,), dtype=np.float32)
+        self.observation_space = spaces.Box(low=self.get_low(), high=self.get_high, shape=(self.num_players * 2 + 3), dtype=np.float32)
 
         self.window = None
         self.clock = None

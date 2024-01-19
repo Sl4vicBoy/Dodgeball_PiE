@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2e688652-ea96-472f-8a3d-ecb796f5e0f8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/gym/dodgeball_agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gym/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gym/env/dodgeball.py" beforeDir="false" afterPath="$PROJECT_DIR$/gym/env/dodgeball.py" afterDir="false" />
     </list>
@@ -67,7 +69,7 @@
       <workItem from="1704380409411" duration="3354000" />
       <workItem from="1704452562498" duration="1680000" />
       <workItem from="1705268160699" duration="1108000" />
-      <workItem from="1705614534964" duration="8646000" />
+      <workItem from="1705614534964" duration="9249000" />
     </task>
     <servers />
   </component>
