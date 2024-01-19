@@ -1,7 +1,7 @@
 import gym
-from env.dodgeball import DodgeballEnv
+import gym_env
 
-environment = gym.make("Dodgeball-v0", render_mode="human")
+environment = gym.make("DodgeballEnv-v0")
 
 episodes = 10
 

@@ -79,16 +79,16 @@ class DodgeballEnv(gym.Env):
         self.num_players = 6
 
         self.action_space = spaces.Dict({
-            "move": Tuple([
-                Box(low=-10, high=10, shape=(2,), dtype=np.float32),
-                Box(low=-10, high=10, shape=(2,), dtype=np.float32),
-                Discrete(2),
-                Discrete(2)
+            "move": spaces.Tuple([
+                spaces.Box(low=-10, high=10, shape=(2,), dtype=np.float32),
+                spaces.Box(low=-10, high=10, shape=(2,), dtype=np.float32),
+                spaces.Discrete(2),
+                spaces.Discrete(2)
             ]),
-            "throw": Tuple([
-                Box(low=np.radians(-90), high=np.radians(90), shape=(1,), dtype=np.float32),
-                Box(low=-10, high=10, shape=(2,), dtype=np.float32),
-                Discrete(2)
+            "throw": spaces.Tuple([
+                spaces.Box(low=np.radians(-90), high=np.radians(90), shape=(1,), dtype=np.float32),
+                spaces.Box(low=-10, high=10, shape=(2,), dtype=np.float32),
+                spaces.Discrete(2)
             ])
         })
         self.observation_space = spaces.Box(low=self.get_low(), high=self.get_high, shape=(self.num_players * 2 + 3), dtype=np.float32)
@@ -224,7 +224,7 @@ class DodgeballEnv(gym.Env):
         observation = self._get_observation()
         reward = 0 if self.ball.caught_by_player is None else 1
         info = None  # jakies get info mozemy zaimplementowac
-        return observation, reward, terminated, False, info
+        return observation, reward, terminated, info
 
     def render(self):  # tu jest rysowanie i ustawianie wszystkiego -> pygame
         if self.window is None:
