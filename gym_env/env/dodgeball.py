@@ -47,7 +47,7 @@ def change_player(team, player_in_control, marker):
 
 
 class DodgeballEnv(gym.Env):
-    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 10}
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 30}
 
     def __init__(self):
         super(DodgeballEnv, self).__init__()
@@ -91,7 +91,7 @@ class DodgeballEnv(gym.Env):
                 spaces.Discrete(2)
             ])
         })
-        self.observation_space = spaces.Box(low=self.get_low(), high=self.get_high, shape=(self.num_players * 2 + 3), dtype=np.float32)
+        self.observation_space = spaces.Box(low=0, high=800, shape=(self.num_players * 2 + 3, ), dtype=np.float32)
 
         self.window = None
         self.clock = None
@@ -177,8 +177,8 @@ class DodgeballEnv(gym.Env):
         self.player_controlled_left = self.team_left[0]
         self.player_controlled_right = self.team_right[0]
 
-        observation = None
-        info = None
+        observation = self._get_observation()
+        info = {}
 
         return observation, info
 
@@ -215,7 +215,7 @@ class DodgeballEnv(gym.Env):
 
         terminated = False
 
-        if self.ball.check_collision_obstacle(self.ball_obstacles, self.players_playing):
+        if self.ball.check_collision_player(self.players_playing):
             check_benched(self.players_playing, self.bench_left, self.bench_right, self.team_left, self.team_right)
 
         if not self.team_left or not self.team_right:
@@ -223,7 +223,7 @@ class DodgeballEnv(gym.Env):
 
         observation = self._get_observation()
         reward = 0 if self.ball.caught_by_player is None else 1
-        info = None  # jakies get info mozemy zaimplementowac
+        info = {}  # jakies get info mozemy zaimplementowac
         return observation, reward, terminated, info
 
     def render(self):  # tu jest rysowanie i ustawianie wszystkiego -> pygame
@@ -238,10 +238,10 @@ class DodgeballEnv(gym.Env):
 
         SCREEN.fill('Green')
 
-        self.obstacles_player.draw()
+        self.obstacles_player.draw(SCREEN)
         self.all_players.draw(SCREEN)
         self.marker_sprite.draw(SCREEN)
-        self.ball.draw(SCREEN)
+        self.ball_sprite.draw(SCREEN)
         self.all_players.update()
 
         pygame.event.pump()
@@ -260,18 +260,32 @@ class DodgeballEnv(gym.Env):
         return observation
     
     def get_high(self):
-        player_xy_high = np.array([600, 800]*self.num_players, dtype=np.float32)
-        ball_xy_high = np.array([600, 800], dtype=np.float32)
-        is_caught_high = 1
+        high_values = np.zeros(self.num_players * 2 + 3, dtype=np.float32)
 
-        return np.concatenate([player_xy_high, ball_xy_high, is_caught_high])
+        high_values[0] = 600
+        high_values[1] = 800
+        high_values[2] = 600
+        high_values[3] = 800
+        high_values[4] = 600
+        high_values[5] = 800
+        high_values[6] = 600
+        high_values[7] = 800
+        high_values[8] = 1
+        return high_values
     
     def get_low(self):
-        player_xy_low = np.array([0, 0]*self.num_players, dtype=np.float32)
-        ball_xy_low = np.array([0, 0], dtype=np.float32)
-        is_caught_low = 0
+        high_values = np.zeros(self.num_players * 2 + 3, dtype=np.float32)
 
-        return np.concatenate([player_xy_low, ball_xy_low, is_caught_low])
+        high_values[0] = 600
+        high_values[1] = 800
+        high_values[2] = 600
+        high_values[3] = 800
+        high_values[4] = 600
+        high_values[5] = 800
+        high_values[6] = 600
+        high_values[7] = 800
+        high_values[8] = 1
+        return high_values
 
     def close(self):
         if self.window is not None:
