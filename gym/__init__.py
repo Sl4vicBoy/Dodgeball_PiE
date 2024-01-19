@@ -1,6 +1,6 @@
 from gym.envs.registration import register
 
 register(
-    id="gymDodgeBall",
-    entry_point="",
+    id="Dodgeball-v0",
+    entry_point="gym.env.dodgeball.py:DodgeballEnv",
 )
