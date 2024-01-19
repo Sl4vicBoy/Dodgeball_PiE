@@ -5,7 +5,7 @@ from random import randint
 from player import Player
 from obstacle import Obstacle, Midline, HpObstacle
 from ball import Ball
-from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, NONE,
+from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
 from marker import Marker
 from gym import spaces
@@ -52,7 +52,6 @@ class DodgeballEnv(gym.Env):
     def __init__(self):
         super(DodgeballEnv, self).__init__()
 
-        self.cue = None
         self.ball = None
         self.all_players = None
         self.bench_left = None
@@ -65,7 +64,6 @@ class DodgeballEnv(gym.Env):
         self.obstacles_player = None
         self.ball_obstacles = None
         self.ball_sprite = None
-        self.cue_sprite = None
         self.marker_sprite = None
         self.middle_line = None
         self.team_right_line = None
@@ -185,36 +183,35 @@ class DodgeballEnv(gym.Env):
         return observation, info
 
     def step(self, action):
-        self.ball.move()
-        self.ball.maintain_collision_obstacle(self.ball_obstacles, self.players_playing)
-
         if self.ball.caught_by_player is None:
             move_vector_right, move_vector_left, switch_right, switch_left = action["move"]
-            self.player_controlled_right.move(move_vector_right, self.marker_right, self.obstacles_player, self.team_right)
-            self.player_controlled_left.move(move_vector_left, self.marker_left, self.obstacles_player, self.team_left)
             if switch_right:
                 self.player_controlled_right = change_player(self.team_right, self.player_controlled_right,
                                                              self.marker_right)
             if switch_left:
                 self.player_controlled_left = change_player(self.team_left, self.player_controlled_left,
                                                             self.marker_left)
+            self.player_controlled_right.move(move_vector_right, self.marker_right, self.obstacles_player,
+                                              self.team_right)
+            self.player_controlled_left.move(move_vector_left, self.marker_left, self.obstacles_player, self.team_left)
             self.player_controlled_left.catch_ball(self.ball)
             self.player_controlled_right.catch_ball(self.ball)
         else:
             throwing_angle, move_vector, switch = action["throw"]
-
             if self.ball.caught_by_player.team == RIGHT:
-                self.player_controlled_left.move(move_vector, self.marker_left, self.obstacles_player, self.team_left)
                 if switch:
                     self.player_controlled_left = change_player(self.team_left,
                                                   self.player_controlled_left, self.marker_left)
+                self.player_controlled_left.move(move_vector, self.marker_left, self.obstacles_player, self.team_left)
             else:
-                self.player_controlled_right.move(move_vector, self.marker_left, self.obstacles_player, self.team_right)
                 if switch:
                     self.player_controlled_right = change_player(self.team_right,
-                                                                 self.player_controlled_right, self.marker_right)
-
+                                                                self.player_controlled_right, self.marker_right)
+                self.player_controlled_right.move(move_vector, self.marker_left, self.obstacles_player, self.team_right)
             self.ball.throw_a_ball(throwing_angle)
+
+        self.ball.move()
+        self.ball.maintain_collision_obstacle(self.ball_obstacles, self.players_playing)
 
         terminated = False
 
@@ -223,8 +220,9 @@ class DodgeballEnv(gym.Env):
 
         if not self.team_left or not self.team_right:
             terminated = True
+
         observation = self._get_observation()
-        reward = 0  # zapytac jeszcze raz !!!
+        reward = 0 if self.ball.caught_by_player is None else 1
         info = None  # jakies get info mozemy zaimplementowac
         return observation, reward, terminated, False, info
 
