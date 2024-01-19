@@ -1,7 +1,6 @@
 import pygame
-import os
-from constant_values import BORDER_COLOR
-from hpbar import HpBar
+from env.constant_values import BORDER_COLOR
+from env.hpbar import HpBar
 
 
 class Obstacle(pygame.sprite.Sprite):

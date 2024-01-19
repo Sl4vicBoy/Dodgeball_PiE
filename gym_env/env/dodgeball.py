@@ -2,12 +2,12 @@ import gym
 import numpy as np
 import pygame
 from random import randint
-from player import Player
-from obstacle import Obstacle, Midline, HpObstacle
-from ball import Ball
-from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
+from env.player import Player
+from env.obstacle import Obstacle, Midline, HpObstacle
+from env.ball import Ball
+from env.constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
-from marker import Marker
+from env.marker import Marker
 from gym import spaces
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + SCOREBOARD))

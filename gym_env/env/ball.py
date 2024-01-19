@@ -1,7 +1,7 @@
 import pygame
 import os
 import math
-from constant_values import FPS, LEFT, RIGHT, NONE
+from env.constant_values import FPS, LEFT, RIGHT, NONE
 
 
 class Ball(pygame.sprite.Sprite):
@@ -12,7 +12,7 @@ class Ball(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.max_vel = None
-        ball_img = pygame.image.load(os.path.join('Assets', 'balls', 'basket-ball.png')).convert_alpha()
+        ball_img = pygame.image.load(os.path.join('env', 'Assets', 'balls', 'basket-ball.png')).convert_alpha()
         ball_img_scaled = pygame.transform.scale(ball_img, (self.DIAMETER, self.DIAMETER))
         self.image = ball_img_scaled
         self.rect = self.image.get_rect(center=(x, y))

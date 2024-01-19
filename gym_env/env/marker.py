@@ -1,6 +1,5 @@
 import pygame
 
-
 class Marker(pygame.sprite.Sprite):
     def __init__(self, player):
         super().__init__()
