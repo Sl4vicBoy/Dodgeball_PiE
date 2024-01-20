@@ -2,7 +2,7 @@ import pygame
 import os
 import math
 from env.constant_values import FPS, LEFT, RIGHT, NONE
-
+import numpy as np
 
 class Ball(pygame.sprite.Sprite):
     DIAMETER = 20
@@ -81,14 +81,17 @@ class Ball(pygame.sprite.Sprite):
                 self.danger = NONE
 
     def throw_a_ball(self, angle):
-        throwing_x_vel = math.cos(math.radians(angle)) * 5
-        throwing_y_vel = math.sin(math.radians(angle)) * 5
-        # can be force*x_impulse, y_impulse depending on a player
-        self.def_vel(throwing_x_vel, throwing_y_vel)
+        throwing_angle = angle
         if self.caught_by_player.team == LEFT:
             self.danger = RIGHT
         if self.caught_by_player.team == RIGHT:
             self.danger = LEFT
+            throwing_angle = np.radians(180) - angle
+
+        throwing_x_vel = np.cos(throwing_angle) * 5
+        throwing_y_vel = np.sin(throwing_angle) * 5
+        # can be force*x_impulse, y_impulse depending on a player
+        self.def_vel(throwing_x_vel, throwing_y_vel)
         self.caught_by_player = None
 
 

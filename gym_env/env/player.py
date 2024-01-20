@@ -1,7 +1,7 @@
 import pygame
 import os
 from math import sqrt
-
+import numpy as np
 
 class Player(pygame.sprite.Sprite):
     VEL = 4
@@ -39,14 +39,16 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(center=(x, y))
 
-    def move(self, vector, marker, obstacles, team):
+    def move(self, angle, marker, obstacles, team):
         current_x = self.rect.x
         current_y = self.rect.y
         prev_rect = self.rect
         prev_img = self.image
 
-        self.rect.x += vector[0]
-        self.rect.y += vector[1]
+        move_x = np.cos(angle)*10
+        move_y = np.sin(angle)*10
+        self.rect.x += move_x
+        self.rect.y += move_y
 
         obstacle_collision = pygame.sprite.spritecollide(self, obstacles, False, pygame.sprite.collide_mask)
         player_collision = pygame.sprite.spritecollide(self, team, False, pygame.sprite.collide_mask)
