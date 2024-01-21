@@ -281,18 +281,8 @@ class DodgeballEnv(gym.Env):
         return high_values
     
     def get_low(self):
-        high_values = np.zeros(self.num_players * 2 + 3, dtype=np.float32)
-
-        high_values[0] = 600
-        high_values[1] = 800
-        high_values[2] = 600
-        high_values[3] = 800
-        high_values[4] = 600
-        high_values[5] = 800
-        high_values[6] = 600
-        high_values[7] = 800
-        high_values[8] = 1
-        return high_values
+        low_values = np.zeros(self.num_players * 2 + 3, dtype=np.float32)
+        return low_values
 
     def close(self):
         if self.window is not None:
