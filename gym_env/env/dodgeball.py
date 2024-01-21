@@ -76,6 +76,7 @@ class DodgeballEnv(gym.Env):
         self.player_controlled_left = None
         self.player_controlled_right = None
         self.is_caught = 0
+        self.ball_caught_by_player = None
         self.num_players = 6
 
         self.action_space = spaces.Dict({
@@ -91,7 +92,8 @@ class DodgeballEnv(gym.Env):
                 spaces.Discrete(2)
             ])
         })
-        self.observation_space = spaces.Box(low=0, high=800, shape=(self.num_players * 2 + 3, ), dtype=np.float32)
+        #tu pilnować żeby były użyte get_low() i get_high() bo sie cały czas usuwa
+        self.observation_space = spaces.Box(low=self.get_low(), high=self.get_high(), shape=(self.num_players * 2 + 3, ), dtype=np.float32)
 
         self.window = None
         self.clock = None
@@ -242,7 +244,8 @@ class DodgeballEnv(gym.Env):
 
         SCREEN.fill('Green')
 
-        self.obstacles_player.draw(SCREEN)
+        for obstacle in self.obstacles_player:
+            obstacle.draw(SCREEN)
         self.all_players.draw(SCREEN)
         self.marker_sprite.draw(SCREEN)
         self.ball_sprite.draw(SCREEN)

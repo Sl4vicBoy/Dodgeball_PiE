@@ -33,10 +33,7 @@ class Ball(pygame.sprite.Sprite):
         if collision:
             obstacle = collision[0]
             if obstacle.destroyable:
-                if not obstacle.bomb:
-                    obstacle.update(self.vel, self.max_vel)
-                elif obstacle.bomb:
-                    obstacle.update(self.vel, self.max_vel, players_playing)
+                obstacle.update(self.vel, self.max_vel)
             if (self.rect.bottom <= obstacle.rect.bottom + self.DIAMETER and
                     self.rect.top >= obstacle.rect.top - self.DIAMETER):
                 if self.rect.right <= obstacle.rect.left:
