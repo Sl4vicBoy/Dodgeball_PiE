@@ -93,7 +93,7 @@ class DodgeballEnv(gym.Env):
             ])
         })
         #tu pilnować żeby były użyte get_low() i get_high() bo sie cały czas usuwa
-        self.observation_space = spaces.Box(low=self.get_low(), high=self.get_high(), shape=(self.num_players * 2 + 3, ), dtype=np.float32)
+        self.observation_space = spaces.Box(low=self.get_low(), high=self.get_high(), shape=(self.num_players * 2 + 4, ), dtype=np.float32)
 
         self.window = None
         self.clock = None
@@ -260,14 +260,15 @@ class DodgeballEnv(gym.Env):
         for player in self.all_players:
             player_data.extend([player.rect.x, player.rect.y])
 
-        ball_data = [self.ball.rect.x, self.ball.rect.y, self.is_caught]
+        ball_velocity = pygame.math.Vector2.length(self.ball.vel)
+        ball_data = [self.ball.rect.x, self.ball.rect.y, self.is_caught, ball_velocity]
 
         observation = np.array(player_data + ball_data, dtype=np.float32)
 
         return observation
     
     def get_high(self):
-        high_values = np.zeros(self.num_players * 2 + 3, dtype=np.float32)
+        high_values = np.zeros(self.num_players * 2 + 4, dtype=np.float32)
 
         high_values[0] = 600
         high_values[1] = 800
@@ -281,7 +282,7 @@ class DodgeballEnv(gym.Env):
         return high_values
     
     def get_low(self):
-        low_values = np.zeros(self.num_players * 2 + 3, dtype=np.float32)
+        low_values = np.zeros(self.num_players * 2 + 4, dtype=np.float32)
         return low_values
 
     def close(self):

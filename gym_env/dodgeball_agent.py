@@ -11,6 +11,6 @@ for episodes in range(1, episodes+1):
     score = 0
     while not done:
         action = environment.action_space.sample()
-        _, reward, done, __ = environment.step(action)
+        obs, reward, done, info = environment.step(action)
         score += reward
         environment.render()
