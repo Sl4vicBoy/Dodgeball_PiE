@@ -67,8 +67,8 @@ class Player(pygame.sprite.Sprite):
         x = self.rect.centerx
         y = self.rect.centery
         ball_player_distance = sqrt((x - ball.rect.centerx) ** 2 + (y - ball.rect.centery) ** 2)
-
-        if ball_player_distance <= 60:
+        speed = pygame.math.Vector2.length(ball.vel)
+        if ball_player_distance <= 60 and speed < 1.5:
             ball.danger = False
             ball.vel = pygame.math.Vector2(0, 0)
             ball.caught_by_player = self
