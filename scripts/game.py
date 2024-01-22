@@ -248,12 +248,14 @@ def main():
         elif stage == ENDGAME:
             if not team_left:
                 endgame(RIGHT)
-                games_won_right += 1
             if not team_right:
                 endgame(LEFT)
-                games_won_left += 1
             keys = pygame.key.get_pressed()
             if keys[pygame.K_r]:
+                if not team_left:
+                    games_won_right += 1
+                if not team_right:
+                    games_won_left += 1
                 team_left.clear()
                 team_right.clear()
                 bench_left.clear()
