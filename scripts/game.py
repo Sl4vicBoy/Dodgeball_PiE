@@ -233,7 +233,7 @@ def main():
             player_in_control_right.catch_ball(ball, events)
 
             ball.move(target)
-            ball.maintain_collision_obstacle(ball_obstacles, players_playing)
+            ball.maintain_collision_obstacle(ball_obstacles)
 
             if ball.check_collision_player(players_playing):
                 check_benched(players_playing, bench_left, bench_right, team_left, team_right)
