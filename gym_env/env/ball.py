@@ -1,8 +1,8 @@
 import pygame
 import os
 import math
-from constant_values import FPS, LEFT, RIGHT, NONE
-
+from env.constant_values import FPS, LEFT, RIGHT, NONE
+import numpy as np
 
 class Ball(pygame.sprite.Sprite):
     DIAMETER = 20
@@ -12,7 +12,7 @@ class Ball(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.max_vel = None
-        ball_img = pygame.image.load(os.path.join('Assets', 'balls', 'basket-ball.png')).convert_alpha()
+        ball_img = pygame.image.load(os.path.join('env', 'Assets', 'balls', 'basket-ball.png')).convert_alpha()
         ball_img_scaled = pygame.transform.scale(ball_img, (self.DIAMETER, self.DIAMETER))
         self.image = ball_img_scaled
         self.rect = self.image.get_rect(center=(x, y))
@@ -33,7 +33,10 @@ class Ball(pygame.sprite.Sprite):
         if collision:
             obstacle = collision[0]
             if obstacle.destroyable:
-                obstacle.update(self.vel, self.max_vel)
+                if not obstacle.bomb:
+                    obstacle.update(self.vel, self.max_vel)
+                elif obstacle.bomb:
+                    obstacle.update(self.vel, self.max_vel, players_playing)
             if (self.rect.bottom <= obstacle.rect.bottom + self.DIAMETER and
                     self.rect.top >= obstacle.rect.top - self.DIAMETER):
                 if self.rect.right <= obstacle.rect.left:
@@ -61,11 +64,10 @@ class Ball(pygame.sprite.Sprite):
                 player.bench = True
         return collision
 
-    def move(self, target):
+    def move(self):
         if self.caught_by_player:
             player_width = self.caught_by_player.image.get_width()
             ball_width = self.image.get_width()
-            target.visible = True
             self.rect.centery = self.caught_by_player.rect.centery
             if self.caught_by_player.team == RIGHT:
                 self.rect.centerx = self.caught_by_player.rect.centerx - player_width / 2 - ball_width
@@ -78,35 +80,19 @@ class Ball(pygame.sprite.Sprite):
             if speed < 2:
                 self.danger = NONE
 
-    def throw_a_ball(self, target):
-        throwing_x_vel = -math.cos(math.radians(target.angle)) * 5
-        throwing_y_vel = math.sin(math.radians(target.angle)) * 5
-        # can be force*x_impulse, y_impulse depending on a player
-        self.def_vel(throwing_x_vel, throwing_y_vel)
+    def throw_a_ball(self, angle):
+        throwing_angle = angle
         if self.caught_by_player.team == LEFT:
             self.danger = RIGHT
         if self.caught_by_player.team == RIGHT:
             self.danger = LEFT
+            throwing_angle = np.radians(180) - angle
+
+        throwing_x_vel = np.cos(throwing_angle) * 5
+        throwing_y_vel = np.sin(throwing_angle) * 5
+        # can be force*x_impulse, y_impulse depending on a player
+        self.def_vel(throwing_x_vel, throwing_y_vel)
         self.caught_by_player = None
-        target.visible = False
-        pygame.mouse.set_visible(True)
 
 
-class Target(pygame.sprite.Sprite):
-    def __init__(self, pos):
-        pygame.sprite.Sprite.__init__(self)
-        self.target_original_img = pygame.image.load(os.path.join('Assets', 'aims', 'aim.png')).convert_alpha()
-        self.img_scaled = pygame.transform.scale_by(self.target_original_img, 0.027)
-        self.angle = 0
-        self.rect = self.img_scaled.get_rect(center=pos)
-        self.visible = False
 
-    def update(self, surface, ball):
-        mouse_pos = pygame.mouse.get_pos()
-        self.rect.center = mouse_pos
-        if self.visible:
-            pygame.mouse.set_visible(False)
-            self.angle = -math.degrees(math.atan2(ball.rect.center[1] - mouse_pos[1],
-                                                  ball.rect.center[0] - mouse_pos[0]))
-            surface.blit(self.img_scaled, (self.rect.centerx - self.img_scaled.get_width() / 2,
-                                           self.rect.centery - self.img_scaled.get_height() / 2))
