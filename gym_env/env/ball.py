@@ -25,7 +25,7 @@ class Ball(pygame.sprite.Sprite):
 
     def def_vel(self, x_vel, y_vel):
         self.vel = pygame.math.Vector2(x_vel, y_vel)
-        self.max_vel = pygame.math.Vector2(x_vel, y_vel)  # do skalowania mocy uderzenia przy hp_bar
+        self.max_vel = pygame.math.Vector2(x_vel, y_vel)
         self.dvel = pygame.math.Vector2(self.vel.x / (FPS ** 2), self.vel.y / (FPS ** 2))
 
     def maintain_collision_obstacle(self, obstacles, players_playing):
@@ -90,7 +90,6 @@ class Ball(pygame.sprite.Sprite):
 
         throwing_x_vel = np.cos(throwing_angle) * 5
         throwing_y_vel = np.sin(throwing_angle) * 5
-        # can be force*x_impulse, y_impulse depending on a player
         self.def_vel(throwing_x_vel, throwing_y_vel)
         self.caught_by_player = None
 

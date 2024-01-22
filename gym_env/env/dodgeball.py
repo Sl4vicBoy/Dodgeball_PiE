@@ -92,7 +92,6 @@ class DodgeballEnv(gym.Env):
                 spaces.Discrete(2)
             ])
         })
-        #tu pilnować żeby były użyte get_low() i get_high() bo sie cały czas usuwa
         self.observation_space = spaces.Box(low=self.get_low(), high=self.get_high(), shape=(self.num_players * 2 + 4, ), dtype=np.float32)
 
         self.window = None
