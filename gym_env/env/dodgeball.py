@@ -226,9 +226,6 @@ class DodgeballEnv(gym.Env):
         self.is_caught = 0 if self.ball_caught_by_player is None else 1
         reward = 0 if self.ball.caught_by_player is None else 1
         observation = self._get_observation()
-
-
-
         info = {}  # jakies get info mozemy zaimplementowac
         return observation, reward, terminated, info
 
@@ -278,7 +275,14 @@ class DodgeballEnv(gym.Env):
         high_values[5] = 800
         high_values[6] = 600
         high_values[7] = 800
-        high_values[8] = 1
+        high_values[8] = 600
+        high_values[9] = 800
+        high_values[10] = 600
+        high_values[11] = 800
+        high_values[12] = 600
+        high_values[13] = 800
+        high_values[14] = 1
+        high_values[15] = 5
         return high_values
     
     def get_low(self):
