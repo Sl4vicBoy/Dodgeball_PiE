@@ -3,7 +3,7 @@ from random import randint, seed
 from player import Player
 from obstacle import Obstacle, Midline, HpObstacle
 from ball import Ball, Target
-from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT, NONE,
+from constant_values import (SCREEN_WIDTH, SCREEN_HEIGHT, BORDERS_PARAMETER, LEFT, RIGHT,
                              MAX_HEIGHT_OBSTACLE, MAX_WIDTH_OBSTACLE, BORDER_COLOR, SCOREBOARD)
 from marker import Marker
 
@@ -45,7 +45,6 @@ def generate_obstacles(map_obstacles):
     x, y = coord
     new_obstacle = Obstacle(MAX_WIDTH_OBSTACLE, MAX_HEIGHT_OBSTACLE, x, y)
     map_obstacles.add(new_obstacle)
-    
 
    for coord in [(430, 120), (300, 400), (120, 320)]:
        x, y = coord
@@ -137,7 +136,6 @@ def main():
     team_right = []
     bench_left = []
     bench_right = []
-    chosen_team = NONE  # tu docelowo bedzie funkcja do wybierania ktora druzyna chcesz grac(#kiedyssieprzyda)
 
     all_players = pygame.sprite.Group()
     players_playing = pygame.sprite.Group()
@@ -217,7 +215,6 @@ def main():
             if team_with_ball == RIGHT:
                 ball.def_vel(4, 0)
                 ball.danger = LEFT
-            # chosen_team = team_with_ball
             marker_left = Marker(team_left[0])
             marker_right = Marker(team_right[0])
             marker_sprite.add(marker_left, marker_right)
@@ -261,8 +258,10 @@ def main():
                 team_right.clear()
                 bench_left.clear()
                 bench_right.clear()
-                player_in_control = None
+                player_in_control_left = None
+                player_in_control_right = None
 
+                marker_sprite.empty()
                 all_players.empty()
                 players_playing.empty()
                 map_obstacles.empty()

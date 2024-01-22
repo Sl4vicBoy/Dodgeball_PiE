@@ -82,8 +82,8 @@ class Ball(pygame.sprite.Sprite):
                 self.danger = NONE
 
     def throw_a_ball(self, target):
-        throwing_x_vel = -math.cos(math.radians(target.angle)) * (5)
-        throwing_y_vel = math.sin(math.radians(target.angle)) * (5)
+        throwing_x_vel = -math.cos(math.radians(target.angle)) * 5
+        throwing_y_vel = math.sin(math.radians(target.angle)) * 5
         # can be force*x_impulse, y_impulse depending on a player
         self.def_vel(throwing_x_vel, throwing_y_vel)
         if self.caught_by_player.team == LEFT:
@@ -109,5 +109,7 @@ class Target(pygame.sprite.Sprite):
         self.rect.center = mouse_pos
         if self.visible:
             pygame.mouse.set_visible(False)
-            self.angle = -math.degrees(math.atan2(ball.rect.center[1] - mouse_pos[1], ball.rect.center[0] - mouse_pos[0]))
-            surface.blit(self.img_scaled, (self.rect.centerx - self.img_scaled.get_width() / 2,self.rect.centery - self.img_scaled.get_height() / 2))
+            self.angle = -math.degrees(math.atan2(ball.rect.center[1] - mouse_pos[1],
+                                                  ball.rect.center[0] - mouse_pos[0]))
+            surface.blit(self.img_scaled, (self.rect.centerx - self.img_scaled.get_width() / 2,
+                                           self.rect.centery - self.img_scaled.get_height() / 2))

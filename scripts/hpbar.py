@@ -2,6 +2,7 @@ import pygame
 import math 
 from constant_values import HP_COLORS
 
+
 class HpBar(pygame.sprite.Sprite):
     def __init__(self, max_health, obstacle_rect, color='blue', height=5):
         super().__init__()
