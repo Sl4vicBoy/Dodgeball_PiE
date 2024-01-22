@@ -1,9 +1,9 @@
 # Dodgeball
 ## Overview
 This is a Python project for the computer science subject Python in the Enterprise. 
-It’s divided into two parts: realization of a multiplayer game Dodgeball using Pygame Module
-
-and a simple implementation of an agent.
+It’s divided into two parts:
+- realization of a multiplayer game Dodgeball using Pygame Module
+- setting up the environment compatible with OpenAI gym and implementation of an agent.
 #### ![Image of a Game](/../master/scripts/Assets/screenshot/game.png)
 ## Getting started
 ## Contributors
