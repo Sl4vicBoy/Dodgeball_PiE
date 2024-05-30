@@ -9,7 +9,7 @@ It’s divided into two parts:
 To use functionality of our project, ensure you have: PyGame, Gym, NumPy installed.
 ## Contributors
 -  [Aleksaner Kwaśny](https://github.com/akwasnyy)
--  [Dawid Hebda](https://github.com/Zawirusowany)
+-  [Dawid Hebda](https://github.com/Sl4vicBoy)
 -  [Kamil Milewski](https://github.com/K4mi1ewski)
 -  [Joanna Hełdak](https://github.com/monkeykinggggg)
 
